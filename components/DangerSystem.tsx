@@ -1,0 +1,3 @@
+'use client';
+import { useEffect, useState } from 'react';
+export function DangerSystem({label='RED DANGER', sub='System ne bola: bhai bas kar.'}:{label?:string;sub?:string}){const [on,setOn]=useState(false); useEffect(()=>{if(!on)return;const t=setTimeout(()=>setOn(false),1400);return()=>clearTimeout(t)},[on]); return <><button className="danger-btn" onClick={()=>setOn(true)}>🚨 {label}</button>{on&&<div className="danger-overlay"><div className="danger-card"><small>EMERGENCY / LYKA CONTROL</small><div className="danger-title">{label}</div><p>{sub}</p><button onClick={()=>setOn(false)}>theek hai bhai</button></div></div>}</>}
