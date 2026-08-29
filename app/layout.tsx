@@ -11,3 +11,19 @@ export const metadata = {
 export default function RootLayout({children}:{children:React.ReactNode}){
   return <html lang="en"><body><SiteProvider><Shell>{children}</Shell></SiteProvider></body></html>;
 }
+import { Analytics } from "@vercel/analytics/react";
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <Analytics />
+      </body>
+    </html>
+  );
+}
