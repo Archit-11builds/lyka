@@ -1,0 +1,6 @@
+'use client';
+import {createContext,useContext,useEffect,useMemo,useState} from 'react';
+const C=createContext(null);const KEY='lyka-v31-state';
+const clamp=n=>Math.max(0,Math.min(100,n));
+export function SiteProvider({children}){const[ghee,setGhee]=useState(78),[cool,setCool]=useState(0),[danger,setDanger]=useState(null),[six,setSix]=useState(false);useEffect(()=>{try{const x=JSON.parse(localStorage.getItem(KEY)||'null');if(x){setGhee(clamp(Number(x.ghee??78)));setCool(Number(x.cool)||0)}}catch{}},[]);useEffect(()=>{try{localStorage.setItem(KEY,JSON.stringify({ghee,cool}))}catch{}},[ghee,cool]);const spend=n=>setGhee(v=>{const next=clamp(v-n);if(next===0&&v>0)setDanger('GHEE KHATAM');return next});const coolUp=()=>{setCool(v=>{const next=v+1;if(next%8===0)setDanger('COOL OVERFLOW');return next});spend(3)};const refill=n=>{setGhee(v=>clamp(Math.max(v,n||42)));setDanger(null)};const value=useMemo(()=>({ghee,cool,danger,six,setSix,spend,coolUp,refill,clearDanger:()=>setDanger(null)}),[ghee,cool,danger,six]);return <C.Provider value={value}>{children}</C.Provider>}
+export function useSite(){const v=useContext(C);if(!v)throw new Error('useSite must be used inside SiteProvider');return v}

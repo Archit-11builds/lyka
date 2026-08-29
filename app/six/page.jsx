@@ -1,0 +1,1 @@
+'use client';import{useEffect}from'react';import{useSite}from'../../components/SiteProvider';export default function Six(){const{setSix}=useSite();useEffect(()=>{setSix(true)},[setSix]);return <div style={{minHeight:'100svh'}}/>}

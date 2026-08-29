@@ -1,0 +1,1 @@
+'use client';export default function Error({reset}){return <div className="page"><div className="glass error-card"><span className="eyebrow">LYKA / SYSTEM ERROR</span><h1>System thoda <em>hil gaya.</em></h1><p>Ek reset maar. Phir dekhte hain.</p><button className="button hot" onClick={()=>reset()}>TRY AGAIN</button></div></div>}

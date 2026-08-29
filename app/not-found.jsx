@@ -1,0 +1,1 @@
+import Link from'next/link';export default function NotFound(){return <div className="page"><div className="glass error-card"><span className="eyebrow">404 / LOST SIGNAL</span><div className="error-code">404</div><h1>Bhai ye page <em>mil hi nahi raha.</em></h1><p>Shayad Anik ne ise bhi kho diya.</p><Link className="button hot" href="/">WAPAS →</Link></div></div>}

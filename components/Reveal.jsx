@@ -1,0 +1,2 @@
+'use client';import{useEffect,useRef}from'react';
+export function Reveal({children,className=''}){const r=useRef(null);useEffect(()=>{const e=r.current;if(!e)return;const o=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');o.unobserve(x.target)}}),{threshold:.08});o.observe(e);return()=>o.disconnect()},[]);return <div ref={r} className={`reveal ${className}`}>{children}</div>}

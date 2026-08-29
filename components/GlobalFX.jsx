@@ -1,0 +1,2 @@
+'use client';import{useEffect,useState}from'react';
+export function GlobalFX(){const[on,setOn]=useState(false);useEffect(()=>{const f=()=>{setOn(true);window.setTimeout(()=>setOn(false),820)};addEventListener('lyka:navigate',f);return()=>removeEventListener('lyka:navigate',f)},[]);return <div className={`route-transition ${on?'on':''}`} aria-hidden="true"><div className="transition-word">LYKA</div><div className="transition-rule"/></div>}
