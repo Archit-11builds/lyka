@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Reveal } from '../../components/Reveal';
 
-const quotes=['Bhai ne button dekha aur immediately press kar diya.','Scientific accuracy: questionable. Entertainment: approved.','Anik.exe has stopped making normal decisions.','Ghee levels critical. Confidence levels completely unaffected.'];
+const quotes=['Bhai ne button dekha aur turant daba diya. Classic Anik.','Gopal Sir: itna confidence maths mein bhi rakh le bhai.','Anik.exe: logic mil nahi raha, memes mil gaye.','Papa ka naam mat lena, seedha answer de.'];
 const secrets=['KYA DEKH RAHE HO 👀','404: COMMON SENSE NOT FOUND','GOPAL SIR HAS ENTERED THE CHAT','ANIK DETECTED. ABORT MISSION.','THIS BUTTON DOES NOTHING. PROBABLY.']; const hints=['Look where LYKA first introduces itself.','A module that measures confidence is hiding something.','The flight deck has more than one route.','The archive has a door that looks too ordinary.','The Maths Lab has a number that is not a score.','Photos have more than pictures.','The HQ has a classified corner.','The navigation system remembers things.','The final page is not really the end.','LMAO Lab itself is hiding the last one.'];
 
 export default function LmaoLab(){
@@ -16,13 +16,13 @@ export default function LmaoLab(){
  const startReaction=()=>{clearInterval(timer.current);setHits(0);setTime(15);setRunning(true);setSecret(null);timer.current=setInterval(()=>setTime(v=>{if(v<=1){clearInterval(timer.current);setRunning(false);return 0}return v-1}),1000)};
  const hit=()=>{if(!running)return;setHits(v=>{const n=v+1;setBest(b=>Math.max(b,n));return n});setTarget({x:10+Math.random()*80,y:14+Math.random()*72});randomSecret()};
  const newMath=()=>{clearInterval(mathTimer.current);const a=11+Math.floor(Math.random()*40),b=7+Math.floor(Math.random()*25),ans=a*b;setMath({a,b,answer:ans,opts:[ans,ans+7,ans-9,a+b].sort(()=>Math.random()-.5)});setMathTime(4);setMathQ(v=>v+1)};
- const startMath=()=>{setMathScore(0);setMathQ(0);setMathDone(false);setMathFinal(0);setQuote(quotes[Math.floor(Math.random()*quotes.length)]);newMath()};
+ const startMath=()=>{setMathScore(0);setMathQ(0);setMathDone(false);setMathFinal(0);setQuote(quotes[egg%quotes.length]);newMath()};
  const finishMath=score=>{clearInterval(mathTimer.current);setMath(null);setMathDone(true);setMathFinal(score);setQuote(score>=8?'Maths Sir has questions. You apparently have answers.':score>=5?'Not terrible. The calculator remains disappointed.':'That score has been reported to Maths Sir. Good luck.');
  };
- const answerMath=v=>{if(!math)return;const next=Math.max(0,mathScore+(v===math.answer?1:-1));setMathScore(next);setQuote(v===math.answer?'SAHI. Rare footage.':'GALAT. Calculator ko blame mat kar.');if(mathQ>=10)finishMath(next);else newMath()};
- const timeoutMath=()=>{const next=Math.max(0,mathScore-1);setMathScore(next);if(mathQ>=10)finishMath(next);else newMath()};
+ const answerMath=v=>{if(!math)return;const next=Math.max(0,mathScore+(v===math.answer?1:-1));setMathScore(next);setQuote(v===math.answer?'SAHI. Rare footage. Gopal Sir bhi maan gaye.':'GALAT. Calculator ko blame mat kar, question ko padh le bhai.');if(mathQ>=10)finishMath(next);else newMath()};
+ const timeoutMath=()=>{const next=Math.max(0,mathScore-1);setMathScore(next);setQuote('TIMEOUT. Bhai question padhte-padhte interval khatam ho gaya.');if(mathQ>=10)finishMath(next);else newMath()};
  const tab=id=>{setGame(id);setSecret(null);if(id==='math'){clearInterval(mathTimer.current);setMath(null);setMathDone(false)}};
- const scoreLine=s=>s>=10?'Bro. Maths Sir is requesting your address.':s>=8?'Disgusting. You actually cooked.':s>=6?'Nice try, son. The syllabus is still undefeated.':s>=4?'Respectfully, that was a financial decision.':s>=2?'The answer sheet would like a word with you.':'Excellent. You have successfully multiplied two numbers into a crisis.';
+ const scoreLine=s=>s>=10?'10/10 — Gopal Sir ne attendance laga di. Ab ghar ja aur kuch mat kar.':s>=8?'8–9/10 — Aaj toh bhai ne syllabus ki dhulai kar di. Kal phir aukaat check hogi.':s>=6?'6–7/10 — Nice try son. Maths ne bola: abhi picture baaki hai.':s>=4?'4–5/10 — Itna confidence kis baat ka tha? Answer sheet abhi bhi ro rahi hai.':s>=2?'2–3/10 — Bhai ne calculator ko bhi emotional damage de diya.':'0–1/10 — Excellent. Question paper ne tujhe dekha aur bola: rehne de bhai.';
  return <div className="page lmao-page">
   <div className="page-hero lmao-hero"><div className="page-title"><span className="eyebrow">ROOM 09 / LMAO LAB / CLASSIFIED ENTERTAINMENT</span><h1>Nothing useful.<br/><em>Maximum difficulty.</em></h1><p className="lede">Three games. One questionable lab. Your score will be remembered.</p></div><div className="lmao-stamp">NO<br/>SKILL<br/>ISSUE</div></div>
   <div className="lmao-rewardbar"><b>10 SECRET LOCATIONS</b><span>{found.length}/10 FOUND · {10-found.length} REMAINING</span><button onClick={()=>setHintOpen(v=>!v)}>{hintOpen?'HIDE HINTS':'SHOW HINTS'}</button></div>
