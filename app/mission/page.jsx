@@ -63,3 +63,4 @@ export default function Mission() {
       </aside>
     </Reveal>
   </div>
+}
