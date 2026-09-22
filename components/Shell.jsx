@@ -234,7 +234,7 @@ export function Shell({ children }) {
           {route:'/hq',index:9,left:'50.5%',top:'11%',kind:'genius'}
         ];
         const spot=secretSpots.find(x=>x.route===path && !hunt.includes(x.index));
-        return spot ? <button className={'hunt-hotspot '+spot.kind} style={{left:spot.left,top:spot.top}} onClick={()=>revealSecret(spot.index)} aria-label={'Hidden secret '+(spot.index+1)}><span>{spot.kind==='easy'?'✦':'+'}</span><b>SECRET {String(spot.index+1).padStart(2,'0')}</b></button> : null;
+        return spot ? <button className={'hunt-hotspot '+spot.kind} style={{left:spot.left,top:spot.top}} onClick={()=>revealSecret(spot.index)} aria-label={'Hidden field artifact '+(spot.index+1)}><span className="hunt-artifact-core"/><i className="hunt-artifact-ring"/><b>FIELD ARTIFACT {String(spot.index+1).padStart(2,'0')}</b></button> : null;
       })()}
       {huntCelebration && <div className={'hunt-celebration '+(huntCelebration.final?'final':'')} aria-live="polite">
         <div className="celebration-burst">{Array.from({length:42},(_,i)=><i key={i} style={{'--a':(i*8.57)+'deg','--d':(70+(i%9)*12)+'px','--r':(i%2?'2px':'4px'),'--delay':(i%7)*18+'ms'}}/> )}</div>
