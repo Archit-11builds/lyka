@@ -31,6 +31,18 @@ export default function Home(){
 
   <div className="orbit-lines" aria-hidden="true"><i/><i/><i/></div><section className="split-feature"><div className="study-panel"><div className="lux-label">03 / DAILY DROP <span>HARD LAB</span></div><div className="challenge-number">0{challenge.right?3:1}</div><h2>{challenge.q}</h2><p>A random hard question from the LYKA Maths Lab. The answer is waiting inside.</p><TransitionLink href="/maths-sir" className="under-link">OPEN MATHS LAB <b>→</b></TransitionLink></div><div className="stats-panel"><div className="lux-label">LIVE / SESSION</div><div className="energy-read"><strong>{energy}</strong><span>%</span></div><div className="lux-bar"><i style={{width:energy+'%'}}/></div><div className="stat-row"><div><small>GHEE</small><b>{ghee}%</b></div><div><small>COOL</small><b>{cool}</b></div><div><small>STATUS</small><b>ACTIVE</b></div></div></div></section>
 
+  <section className="field-notes reveal-block">
+   <div className="lux-label"><span>04 / FIELD NOTES</span><span>PRIVATE ARCHIVE • 2026</span></div>
+   <div className="notes-layout">
+    <div className="notes-intro"><p className="notes-index">LYKA / NOTEBOOK</p><h2>Small moments.<br/><em>Big archive.</em></h2><p>Not everything needs a purpose. Some things just deserve a place to live.</p></div>
+    <div className="notes-list">
+     <article><span>01</span><div><small>OBSERVATION</small><h3>Too much confidence.</h3><p>Documented. Repeated. Still unexplained.</p></div><b>↗</b></article>
+     <article><span>02</span><div><small>STUDY LOG</small><h3>Maths was involved.</h3><p>The evidence remains suspiciously detailed.</p></div><b>↗</b></article>
+     <article><span>03</span><div><small>ARCHIVE NOTE</small><h3>Nothing here is normal.</h3><p>That is, unfortunately, the point.</p></div><b>↗</b></article>
+    </div>
+   </div>
+  </section>
+
   <section className="closing"><div className="closing-grid" aria-hidden="true"><i/><i/><i/><i/></div><div className="lux-label">04 / END OF TRANSMISSION</div><h2>COME FOR THE<br/><em>DESIGN.</em><br/>STAY FOR THE CHAOS.</h2><TransitionLink href="/hq" className="lux-btn fill">OPEN HQ <b>↗</b></TransitionLink></section>
  </div>
 }
