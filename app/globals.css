@@ -174,3 +174,20 @@ radial-gradient(circle at 50% 45%,rgba(118,86,232,.16),transparent 48%)!importan
 .six-question{box-shadow:0 18px 50px rgba(35,30,22,.07),inset 0 1px rgba(255,255,255,.9)!important}
 .six-options button{min-height:64px!important;font-size:11px!important}
 @media(max-width:600px){.six-panel:before{left:22px;right:22px;top:98px}.six-panel h1{margin-top:62px!important}.six-options button{min-height:58px!important}}
+
+
+/* FINAL TYPOGRAPHY REPAIR */
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.nav-shell nav a{font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.01em;color:#55514b}
+.ghee-pill,.command-button,.index-button{font-family:inherit;font-size:10px;letter-spacing:.02em;font-weight:600}
+.brand b{font-family:inherit;font-size:17px;letter-spacing:-.045em}.brand small{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:7px}
+.kicker,.lux-label,.hero-top,.feature-body small,.feature-num,.art-meta span,.art-float,.art-caption,.scroll-mark,.lux-marquee div,.challenge-number,.under-link,.hero-signal span,.hero-signal b,.six-top,.six-foot,.drawer-head span,.drawer-head small,.drawer-foot,.command-head,.command-foot{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.hero-desc,.intro-block p,.feature-body p,.study-panel p{font-family:inherit;font-size:14px;line-height:1.75;letter-spacing:0}
+.feature-body h3{font-family:inherit;letter-spacing:-.055em}
+.nav-overlay,.command-backdrop{font-family:inherit}
+.drawer-hero h2{font-family:inherit;letter-spacing:-.06em}.drawer-hero p{font-size:14px;line-height:1.6;color:var(--muted)}
+.drawer-links a strong,.drawer-six strong{font-family:inherit;font-size:20px;letter-spacing:-.035em}.drawer-links a span,.drawer-six span{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px}.drawer-links em,.drawer-six em{font-size:18px}
+.command-grid a span,.command-grid button span{font-family:inherit;font-size:16px;font-weight:600;letter-spacing:-.02em}.command-grid a b,.command-grid button b{font-size:15px}
+.command-input span{font-family:inherit;font-size:13px;font-weight:600;letter-spacing:0}
+.six-panel h1{font-family:inherit;font-size:clamp(54px,8vw,92px);line-height:.88;letter-spacing:-.075em}.six-panel p{font-family:inherit;font-size:14px;line-height:1.65}.six-question h2{font-family:inherit;font-size:clamp(22px,3vw,34px);line-height:1.08;letter-spacing:-.035em}.six-options button{font-family:inherit;font-size:14px;font-weight:600;letter-spacing:0}
+@media(max-width:600px){.nav-shell nav a{font-size:10px}.hero-desc,.intro-block p,.feature-body p,.study-panel p{font-size:13px}.drawer-links a strong,.drawer-six strong{font-size:18px}.command-grid a span,.command-grid button span{font-size:15px}.six-panel{padding:24px!important}.six-panel h1{font-size:48px}.six-question{padding:22px}.six-question h2{font-size:22px}}
