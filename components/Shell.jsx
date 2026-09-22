@@ -26,6 +26,7 @@ export function Shell({ children }) {
   const [hint, setHint] = useState(false);
   const [huntPanel, setHuntPanel] = useState(false);
   const [huntToast, setHuntToast] = useState('');
+  const [huntCelebration, setHuntCelebration] = useState(null);
 
   useEffect(() => {
     try { setHunt(JSON.parse(localStorage.getItem('lyka-hunt') || '[]')); } catch {}
@@ -94,13 +95,15 @@ export function Shell({ children }) {
   };
 
   const revealSecret = (index) => {
-    if (hunt.includes(index)) return;
+    if (hunt.includes(index) || index < 0 || index > 9) return;
     const next = [...hunt, index];
     setHunt(next);
     try { localStorage.setItem('lyka-hunt', JSON.stringify(next)); } catch {}
     const remaining = 10 - next.length;
     setHuntToast(next.length === 10 ? 'ALL 10 FOUND — ₹100 REWARD UNLOCKED' : 'SECRET ' + (index + 1) + ' FOUND — ' + remaining + ' REMAINING');
+    setHuntCelebration({ index, final: next.length === 10 });
     window.setTimeout(() => setHuntToast(''), 2600);
+    window.setTimeout(() => setHuntCelebration(null), 2100);
     window.dispatchEvent(new CustomEvent('lyka:secret', { detail: { index, remaining } }));
   };
 
@@ -207,7 +210,26 @@ export function Shell({ children }) {
 
       <main>{children}</main>
       {huntPanel && !six && <div className="hunt-panel"><div><span className="eyebrow">LYKA / SECRET HUNT</span><button onClick={()=>setHuntPanel(false)}>×</button></div><h3>{hunt.length}/10 <em>found.</em></h3><p>{hunt.length===10?'Every secret has been found. The ₹100 reward is unlocked.':'Ten tiny locations are hidden across the archive. Clues are casual on purpose — if you want the exact spot, you gotta look.'}</p><div className="hunt-hints">{[['LYKA','first screen pe ek chhoti si cheez ko ignore mat kar 👀'],['ROAST','screen ke kone pe thoda sus kuch hai'],['MATHS','yahan ek number bas number nahi hai bhai'],['ORBIT','route ko bhi dekh, sirf buttons ko nahi'],['VAULT','jo corner bilkul boring lag raha hai, wahi dekh'],['LMAO','games khatam nahi hote jab game khatam hota hai 💀'],['PHOTOS','photo dekh li? ab thoda idhar-udhar bhi scan kar'],['ABOUT','system kuch yaad rakhta hai... bas kya, woh dekh'],['ARCHIVE','files padh aur beech ki bakchodi notice kar'],['HQ','subject file mein ek thread loose chhoda hai']].map(([name,clue],i)=><div key={name} className={hunt.includes(i)?'found':''}><b>{String(i+1).padStart(2,'0')}</b><span>{hunt.includes(i)?'✓ FOUND':name+' — '+clue}</span></div>)}</div></div>}
-      {path !== '/lmao' && <div className="hunt-hotspot" style={{left:((([...links,...allLinks].findIndex(x=>x[0]===path)+10)%10)*9+3)+'%',top:((([...links,...allLinks].findIndex(x=>x[0]===path)+3)%10)*8+18)+'%'}} onClick={() => revealSecret(([...links,...allLinks].findIndex(x => x[0] === path) + 10) % 10)} aria-label="Hidden secret"><span>·</span></div>}
+      {(() => {
+        const secretSpots = [
+          {route:'/hq',index:0,left:'12%',top:'29%',kind:'easy'},
+          {route:'/roast',index:1,left:'88%',top:'24%',kind:'easy'},
+          {route:'/maths-sir',index:2,left:'18%',top:'72%',kind:'easy'},
+          {route:'/mission',index:3,left:'83%',top:'64%',kind:'easy'},
+          {route:'/memes',index:4,left:'9%',top:'52%',kind:'easy'},
+          {route:'/lmao',index:5,left:'91%',top:'78%',kind:'easy'},
+          {route:'/photos',index:6,left:'72%',top:'34%',kind:'easy'},
+          {route:'/about',index:7,left:'27%',top:'83%',kind:'easy'},
+          {route:'/archive',index:8,left:'96%',top:'91%',kind:'hard'},
+          {route:'/hq',index:9,left:'50.5%',top:'11%',kind:'genius'}
+        ];
+        const spot=secretSpots.find(x=>x.route===path && !hunt.includes(x.index));
+        return spot ? <button className={'hunt-hotspot '+spot.kind} style={{left:spot.left,top:spot.top}} onClick={()=>revealSecret(spot.index)} aria-label={'Hidden secret '+(spot.index+1)}><span>{spot.kind==='easy'?'✦':''}</span></button> : null;
+      })()}
+      {huntCelebration && <div className={'hunt-celebration '+(huntCelebration.final?'final':'')} aria-live="polite">
+        <div className="celebration-burst">{Array.from({length:42},(_,i)=><i key={i} style={{'--a':(i*8.57)+'deg','--d':(70+(i%9)*12)+'px','--r':(i%2?'2px':'4px'),'--delay':(i%7)*18+'ms'}}/> )}</div>
+        <div className="celebration-card"><span>✦ SECRET {String(huntCelebration.index+1).padStart(2,'0')} FOUND ✦</span><b>{huntCelebration.final?'HUNT COMPLETE':'NICE FIND.'}</b><small>{huntCelebration.final?'10/10 — challenge unlocked.':'Keep going. The difficulty just changed.'}</small></div>
+      </div>}
       {huntToast && <div className="hunt-toast">{huntToast}</div>}
       {updateOpen && !six && <div className="update-overlay"><div className="update-card"><span className="eyebrow">SYSTEM NOTICE / 22 SEP 2026 / LYKA 032</span><div className="update-signal"><i/>NEW TRANSMISSION</div><h2>The archive<br/><em>just got suspicious.</em></h2><p><b>10 hidden secrets</b> are now scattered across LYKA. Find them all to unlock the in-site <b>₹100 challenge reward</b>. No shortcuts. No hand-holding. Just vibes and suspicious corners.</p><div className="update-grid"><span>01 / Pehle normal explore kar.</span><span>02 / Jo cheez extra polished lage, usko inspect kar.</span><span>03 / Atak gaya? Hints dekh lena.</span><span>04 / Progress isi browser mein save hota hai.</span><span>05 / Last secret thoda villain hai.</span><span>06 / 10/10 = challenge complete.</span></div><button className="button hot" onClick={closeUpdate}>UNDERSTOOD — START HUNTING ↗</button><button className="update-hint" onClick={()=>setHint(v=>!v)}>{hint?'Hint: inspect the interface, not just the content.':'NEED A STARTING HINT?'}</button>{hint&&<small className="update-hint-text">Hint: obvious buttons ko chhod. Jahan UI thoda unnecessarily perfect lag raha hai, wahan dekh.</small>}</div></div>}
       <GlobalFX />
