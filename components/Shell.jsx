@@ -12,7 +12,7 @@ const links = [
   ['/hq', 'HQ'], ['/roast', 'Roast'], ['/maths-sir', 'Maths'],
   ['/mission', 'Orbit'], ['/memes', 'Vault'], ['/archive', 'Archive'],
 ];
-const allLinks = [...links, ['/chaos', 'Chaos'], ['/iq', 'Anik IQ'], ['/live', 'Live Feed'], ['/incidents', 'Incident Room'], ['/lmao', 'LMAO Lab'], ['/photos', 'Photos'], ['/about', 'About']];
+const allLinks = [...links, ['/ai', 'LYKA AI'], ['/chaos', 'Chaos'], ['/iq', 'Anik IQ'], ['/live', 'Live Feed'], ['/incidents', 'Incident Room'], ['/lmao', 'LMAO Lab'], ['/photos', 'Photos'], ['/about', 'About']];
 
 export function Shell({ children }) {
   const path = usePathname();
@@ -170,7 +170,7 @@ export function Shell({ children }) {
               </TransitionLink>
             ))}
           </nav>
-          <div className="nav-right"><button className="global-search-trigger" onClick={()=>setSearchOpen(true)} title="Search LYKA">⌕ <span>SEARCH</span></button>
+          <div className="nav-right"><TransitionLink href="/ai" className="ai-nav-button">AI ↗</TransitionLink><button className="global-search-trigger" onClick={()=>setSearchOpen(true)} title="Search LYKA">⌕ <span>SEARCH</span></button>
             <button className={'hunt-pill '+(hunt.length===10?'complete':'')} title="Secret Hunt progress · press H" onClick={()=>setHuntPanel(v=>!v)}><i/> HUNT <b>{hunt.length}/10</b></button><span className="ghee-pill"><i />GHEE <b>{ghee}%</b></span>
             <button className="index-button" onClick={() => setMenu((v) => !v)}><i /><span>{menu ? 'CLOSE' : 'INDEX'}</span></button>
           </div>
