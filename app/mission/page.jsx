@@ -20,7 +20,7 @@ export default function Mission() {
   const [score, setScore] = useState(0), [cargo, setCargo] = useState(0), [scan, setScan] = useState(false);
   const [heat, setHeat] = useState(18), [message, setMessage] = useState('Choose a world. Then launch LYKA-01.');
   const [event, setEvent] = useState('SYSTEM NOMINAL'), [hazard, setHazard] = useState(false);
-  const [missionComplete, setMissionComplete] = useState(false), [telemetry, setTelemetry] = useState(7420);
+  const [missionComplete, setMissionComplete] = useState(false), [telemetry, setTelemetry] = useState(7420); const [eventLog,setEventLog]=useState([]);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -29,6 +29,8 @@ export default function Mission() {
     }, 1200);
     return () => clearInterval(id);
   }, [phase]);
+
+  useEffect(()=>{ if(event) setEventLog(v=>[{time:new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'}),event},...v].slice(0,8)); },[event]);
 
   const progress = useMemo(() => {
     if (phase === 0) return 0;
@@ -107,7 +109,7 @@ export default function Mission() {
   const reset = () => {
     setPhase(0); setOrbit(0); setDistance(0); setFuel(100); setHull(100); setOxygen(100); setShield(70);
     setCargo(0); setScore(0); setHeat(18); setScan(false); setHazard(false); setMissionComplete(false);
-    setMessage('Choose a world. Then launch LYKA-01.'); setEvent('SYSTEM NOMINAL');
+    setMessage('Choose a world. Then launch LYKA-01.'); setEvent('SYSTEM NOMINAL'); setEventLog([]);
   };
   const health = Math.round((fuel + hull + oxygen + shield) / 4);
 
@@ -141,7 +143,7 @@ export default function Mission() {
         </div>
         <div className="mission-mini"><div><span>SHIP HEALTH</span><b>{health}%</b></div><div><span>OBJECTIVE</span><b>{phase===0?'LAUNCH':phase===1?'LOCK ORBIT':phase===2?'REACH 78%':phase===3?'DOCK':'COMPLETE'}</b></div></div>
         {scan&&<div className="deep-scan-box"><span>DEEP SCAN / ACTIVE</span><b>UNKNOWN CACHE</b><p>OBJECTS: 03<br/>FUEL CELLS: 10<br/>ANIK-032: TRACKED<br/>ROUTE: {Math.round(progress)}%</p></div>}
-      </aside>
+      </aside><aside className="mission-log glass"><div><span>MISSION LOG</span><b>{eventLog.length.toString().padStart(2,'0')} EVENTS</b></div>{eventLog.length?eventLog.map((x,i)=><article key={i}><small>{x.time}</small><span>{x.event}</span></article>):<p>Flight events will appear here once LYKA-01 moves.</p>}</aside>
     </Reveal>
   </div>;
 }
