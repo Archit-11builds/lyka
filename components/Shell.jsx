@@ -26,7 +26,7 @@ export function Shell({ children }) {
   const [hint, setHint] = useState(false);
   const [huntPanel, setHuntPanel] = useState(false);
   const [huntToast, setHuntToast] = useState('');
-  const [huntCelebration, setHuntCelebration] = useState(null);
+  const [huntCelebration, setHuntCelebration] = useState(null); const [searchOpen,setSearchOpen]=useState(false); const [search,setSearch]=useState(''); const [endgame,setEndgame]=useState(false);
 
   useEffect(() => {
     try { setHunt(JSON.parse(localStorage.getItem('lyka-hunt') || '[]')); } catch {}
@@ -117,6 +117,8 @@ export function Shell({ children }) {
     window.dispatchEvent(new CustomEvent('lyka:secret', { detail: { index, remaining } }));
   };
 
+  useEffect(()=>{ if(hunt.length===10){setEndgame(true)} },[hunt.length]);
+
   const closeUpdate = () => {
     setUpdateOpen(false);
     try { localStorage.setItem('lyka-update-seen', '1'); } catch {}
@@ -168,12 +170,14 @@ export function Shell({ children }) {
               </TransitionLink>
             ))}
           </nav>
-          <div className="nav-right">
+          <div className="nav-right"><button className="global-search-trigger" onClick={()=>setSearchOpen(true)} title="Search LYKA">⌕ <span>SEARCH</span></button>
             <button className={'hunt-pill '+(hunt.length===10?'complete':'')} title="Secret Hunt progress · press H" onClick={()=>setHuntPanel(v=>!v)}><i/> HUNT <b>{hunt.length}/10</b></button><span className="ghee-pill"><i />GHEE <b>{ghee}%</b></span>
             <button className="index-button" onClick={() => setMenu((v) => !v)}><i /><span>{menu ? 'CLOSE' : 'INDEX'}</span></button>
           </div>
         </header>
       )}
+
+      {searchOpen && !six && <div className="lyka-search-overlay" onClick={()=>setSearchOpen(false)}><div className="lyka-search-panel" onClick={e=>e.stopPropagation()}><div className="search-head"><span>LYKA / GLOBAL INDEX</span><button onClick={()=>setSearchOpen(false)}>×</button></div><input autoFocus value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search rooms, systems, routes…"/><div className="search-results">{allLinks.filter(([href,label])=>(label+' '+href).toLowerCase().includes(search.toLowerCase())).map(([href,label],i)=><TransitionLink key={href} href={href} onClick={()=>setSearchOpen(false)}><b>{String(i+1).padStart(2,'0')}</b><span>{label}</span><em>{href}</em></TransitionLink>)}{!allLinks.some(([href,label])=>(label+' '+href).toLowerCase().includes(search.toLowerCase()))&&<p>NO MATCH / TRY ANOTHER SIGNAL.</p>}</div><small className="search-foot">ENTER A ROOM · ESC/CLOSE TO EXIT</small></div></div>}
 
       {menu && !six && (
         <div className="nav-overlay" onClick={() => setMenu(false)}>
@@ -240,7 +244,7 @@ export function Shell({ children }) {
         <div className="celebration-burst">{Array.from({length:42},(_,i)=><i key={i} style={{'--a':(i*8.57)+'deg','--d':(70+(i%9)*12)+'px','--r':(i%2?'2px':'4px'),'--delay':(i%7)*18+'ms'}}/> )}</div>
         <div className="celebration-card"><span>✦ SECRET {String(huntCelebration.index+1).padStart(2,'0')} FOUND ✦</span><b>{huntCelebration.final?'HUNT COMPLETE':'NICE FIND.'}</b><small>{huntCelebration.final?'10/10 — challenge unlocked.':'Keep going. The difficulty just changed.'}</small></div>
       </div>}
-      {huntToast && <div className="hunt-toast">{huntToast}</div>}
+      {huntToast && <div className="hunt-toast">{huntToast}</div>}{endgame&&!six&&<div className="hunt-endgame"><div className="endgame-card"><span>LYKA / FINAL FIELD FILE</span><b>10 / 10</b><h2>YOU FOUND<br/><em>THE WHOLE THING.</em></h2><p>The archive is complete. The challenge reward is unlocked inside the site.</p><div><button className="button hot" onClick={()=>setEndgame(false)}>ENTER THE ARCHIVE ↗</button><button onClick={()=>setEndgame(false)}>CLOSE</button></div></div></div>}
       {updateOpen && !six && <div className="update-overlay"><div className="update-card"><div className="update-signal"><i/>SYSTEM UPDATE <b>● LIVE</b></div><div className="notification-meta"><span>LYKA / FIELD SYSTEM</span><span>22 SEP 2026 · 032</span></div><h2>New features.<br/><em>Hidden in plain sight.</em></h2><p><b>10 hidden secrets</b> are now scattered across LYKA. Explore the rooms, inspect the interface and complete the hunt to unlock the in-site <b>₹100 challenge reward</b>.</p><div className="update-grid"><span>01 / Explore normally first.</span><span>02 / Inspect unusually polished details.</span><span>03 / Hints are available if you get stuck.</span><span>04 / Progress saves in this browser.</span><span>05 / Secret 09 is harder.</span><span>06 / Secret 10 is the final challenge.</span><button className="button hot" onClick={closeUpdate}>CONTINUE TO LYKA ↗</button></div><button className="update-hint" onClick={()=>setHint(v=>!v)}>{hint?'Hint: inspect the interface, not just the content.':'NEED A STARTING HINT?'}</button>{hint&&<small className="update-hint-text">Hint: obvious buttons ko chhod. Jahan UI thoda unnecessarily perfect lag raha hai, wahan dekh.</small>}</div></div>}
       <GlobalFX />
       <Danger />
