@@ -18,37 +18,22 @@ export function Shell({ children }) {
   const path = usePathname();
   const { ghee, six, setSix } = useSite();
   const [menu, setMenu] = useState(false);
-  const [cmd, setCmd] = useState(false);
-  const [step, setStep] = useState(0);
+    const [step, setStep] = useState(0);
   const [q, setQ] = useState(() => sixQuestions[Math.floor(Math.random() * sixQuestions.length)]);
   const [msg, setMsg] = useState('');
   const [hunt, setHunt] = useState([]);
   const [updateOpen, setUpdateOpen] = useState(false);
   const [hint, setHint] = useState(false);
+  const [huntPanel, setHuntPanel] = useState(false);
+  const [huntToast, setHuntToast] = useState('');
 
   useEffect(() => {
+    try { setHunt(JSON.parse(localStorage.getItem('lyka-hunt') || '[]')); } catch {}
+    try { if (localStorage.getItem('lyka-update-seen') !== '1') setUpdateOpen(true); } catch { setUpdateOpen(true); }
     document.body.classList.toggle('locked', six);
     return () => document.body.classList.remove('locked');
   }, [six]);
 
-  useEffect(() => {
-    const key = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        setCmd((v) => !v);
-      }
-      if (e.key === '/' && !['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
-        e.preventDefault();
-        setCmd(true);
-      }
-      if (e.key === 'Escape') {
-        setCmd(false);
-        setMenu(false);
-      }
-    };
-    addEventListener('keydown', key);
-    return () => removeEventListener('keydown', key);
-  }, []);
 
   useEffect(() => {
     if (!six) return;
@@ -113,7 +98,10 @@ export function Shell({ children }) {
     const next = [...hunt, index];
     setHunt(next);
     try { localStorage.setItem('lyka-hunt', JSON.stringify(next)); } catch {}
-    window.dispatchEvent(new CustomEvent('lyka:secret', { detail: { index, remaining: 10 - next.length } }));
+    const remaining = 10 - next.length;
+    setHuntToast(next.length === 10 ? 'ALL 10 FOUND — ₹100 REWARD UNLOCKED' : 'SECRET ' + (index + 1) + ' FOUND — ' + remaining + ' REMAINING');
+    window.setTimeout(() => setHuntToast(''), 2600);
+    window.dispatchEvent(new CustomEvent('lyka:secret', { detail: { index, remaining } }));
   };
 
   const closeUpdate = () => {
@@ -124,10 +112,11 @@ export function Shell({ children }) {
   const openSix = () => {
     playSixWarning();
     setMenu(false);
-    setCmd(false);
+    setHuntPanel(false);
     setSix(true);
     setStep(0);
     setMsg('');
+    setHuntPanel(false);
     setQ(sixQuestions[Math.floor(Math.random() * sixQuestions.length)]);
   };
 
@@ -165,8 +154,7 @@ export function Shell({ children }) {
             ))}
           </nav>
           <div className="nav-right">
-            <span className="hunt-pill" title="Secret Hunt progress">HUNT <b>{hunt.length}/10</b></span><span className="ghee-pill"><i />GHEE <b>{ghee}%</b></span>
-            <button className="command-button" onClick={() => setCmd(true)}><kbd>⌘</kbd><span>COMMAND</span><b>K</b></button>
+            <button className="hunt-pill" title="Secret Hunt progress" onClick={()=>setHuntPanel(v=>!v)}>HUNT <b>{hunt.length}/10</b></button><span className="ghee-pill"><i />GHEE <b>{ghee}%</b></span>
             <button className="index-button" onClick={() => setMenu((v) => !v)}><i /><span>{menu ? 'CLOSE' : 'INDEX'}</span></button>
           </div>
         </header>
@@ -199,7 +187,7 @@ export function Shell({ children }) {
         </div>
       )}
 
-      {cmd && !six && (
+      {false && !six && (
         <div className="command-backdrop" onClick={() => setCmd(false)}>
           <div className="command-panel" onClick={(e) => e.stopPropagation()}>
             <div className="command-head"><span>LYKA COMMAND</span><kbd>ESC</kbd></div>
@@ -216,7 +204,9 @@ export function Shell({ children }) {
       )}
 
       <main>{children}</main>
-      <div className="hunt-hotspot" onClick={() => revealSecret(([...links,...allLinks].findIndex(x => x[0] === path) + 10) % 10)} aria-label="Secret location"><span>·</span></div>
+      {huntPanel && !six && <div className="hunt-panel"><div><span className="eyebrow">LYKA / SECRET HUNT</span><button onClick={()=>setHuntPanel(false)}>×</button></div><h3>{hunt.length}/10 <em>found.</em></h3><p>{hunt.length===10?'Every secret has been found. The ₹100 reward is unlocked.':'Ten tiny locations are hidden across the archive. The clues below are deliberately vague.'}</p><div className="hunt-hints">{[['LYKA','The first screen has a detail that is easy to ignore.'],['ROAST','Watch the edge of the interface.'],['MATHS','A number here is more than a number.'],['ORBIT','Look around the route, not just the controls.'],['VAULT','One ordinary-looking corner is not ordinary.'],['LMAO','The lab has more than games.'],['PHOTOS','Inspect the quiet parts of the page.'],['ABOUT','The system has a memory.'],['ARCHIVE','Read between the records.'],['HQ','The subject file has a loose thread.']].map(([name,clue],i)=><div key={name} className={hunt.includes(i)?'found':''}><b>{String(i+1).padStart(2,'0')}</b><span>{hunt.includes(i)?'✓ FOUND':name+' — '+clue}</span></div>)}</div></div>}
+      {path !== '/lmao' && <div className="hunt-hotspot" style={{left:((([...links,...allLinks].findIndex(x=>x[0]===path)+10)%10)*9+3)+'%',top:((([...links,...allLinks].findIndex(x=>x[0]===path)+3)%10)*8+18)+'%'}} onClick={() => revealSecret(([...links,...allLinks].findIndex(x => x[0] === path) + 10) % 10)} aria-label="Hidden secret"><span>·</span></div>}
+      {huntToast && <div className="hunt-toast">{huntToast}</div>}
       {updateOpen && !six && <div className="update-overlay"><div className="update-card"><span className="eyebrow">IMPORTANT UPDATE / LYKA 032</span><h2>The hunt<br/><em>is live.</em></h2><p>There are <b>10 hidden secret locations</b> across the site. Find them all and you can claim the <b>₹100 Archit reward</b>.</p><div className="update-grid"><span>01 / Explore every room.</span><span>02 / Look for tiny suspicious details.</span><span>03 / Use the hunt hints when stuck.</span><span>04 / Progress is saved on this browser.</span><span>05 / The final secret is deliberately difficult.</span><span>06 / 10/10 = reward unlocked.</span></div><button className="button hot" onClick={closeUpdate}>UNDERSTOOD — START HUNTING ↗</button><button className="update-hint" onClick={()=>setHint(v=>!v)}>{hint?'Hint: inspect the interface, not just the content.':'NEED A STARTING HINT?'}</button>{hint&&<small className="update-hint-text">The smallest things on LYKA are sometimes the loudest.</small>}</div></div>}
       <GlobalFX />
       <Danger />
