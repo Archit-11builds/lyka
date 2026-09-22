@@ -1,66 +1,21 @@
 'use client';
-
 import { useEffect, useState } from 'react';
 import { orbitEvents } from '../../lib/data';
 import { useSite } from '../../components/SiteProvider';
 import { Reveal } from '../../components/Reveal';
 
-export default function Mission() {
-  const { spend } = useSite();
-  const [running,setRunning]=useState(false);
-  const [fuel,setFuel]=useState(92);
-  const [stability,setStability]=useState(86);
-  const [score,setScore]=useState(0);
-  const [target,setTarget]=useState(0);
-  const [event,setEvent]=useState(orbitEvents[0]);
-  const [scan,setScan]=useState(false);
-
-  useEffect(()=>{
-    if(!running) return;
-    const id=setInterval(()=>{
-      setTarget(v=>(v+1)%12);
-      setFuel(v=>Math.max(0,v-1));
-      setStability(v=>Math.max(0,v-(Math.random()>.72?2:0)));
-      if(Math.random()>.68)setEvent(orbitEvents[Math.floor(Math.random()*orbitEvents.length)]);
-    },900);
-    return()=>clearInterval(id);
-  },[running]);
-
-  const maneuver=(type)=>{
-    if(type==='boost'){setFuel(v=>Math.max(0,v-8));setStability(v=>Math.max(0,v-3));spend(2);setScore(v=>v+12)}
-    if(type==='brake'){setStability(v=>Math.min(100,v+9));setScore(v=>v+6)}
-    if(type==='reroute'){setTarget(v=>(v+4)%12);setFuel(v=>Math.max(0,v-3));setScore(v=>v+10)}
-    setEvent(orbitEvents[Math.floor(Math.random()*orbitEvents.length)]);
-  };
-
-  return <div className="page mission-page">
-    <div className="page-title mission-title">
-      <div><span className="eyebrow">ROOM 03 / LYKA-01 / FLIGHT DECK</span><h1>Run the <em>mission.</em></h1><p className="lede">A small orbital game. Keep the ship stable, hit the route gates and don't waste the ghee budget.</p></div>
-      <div className="mission-score"><span>SCORE</span><b>{score.toString().padStart(4,'0')}</b><small>MISSION / 032</small></div>
-    </div>
-
-    <Reveal className="mission-game">
-      <section className="flight-map">
-        <div className="map-top"><span>LIVE ORBIT / SECTOR 032</span><b>{running?'TRACKING':'STANDBY'}</b></div>
-        <div className="space-grid"/>
-        <div className="planet-large"><span>EARTH<br/>03</span></div>
-        <div className="orbit-path path-a"/><div className="orbit-path path-b"/>
-        <div className="route-gates">{Array.from({length:12},(_,i)=><i key={i} className={target===i?'hit':''} style={{transform:'rotate('+i*30+'deg) translateY(-185px)'}}/> )}</div>
-        <div className="ship" style={{transform:'rotate('+target*30+'deg) translateY(-185px)'}}><b>LYKA</b></div>
-        <div className="map-readout"><small>TRANSMISSION</small><p>{event}</p></div>
-        <div className="scan-line"/>
-      </section>
-
-      <aside className="mission-control glass">
-        <div className="control-head"><span>MISSION CONTROL</span><b>{running?'● LIVE':'○ PAUSED'}</b></div>
-        {[['FUEL',fuel],['STABILITY',stability]].map(([label,value])=><div className="flight-stat" key={label}><div><span>{label}</span><b>{value}%</b></div><i><b style={{width:value+'%'}}/></i></div>)}
-        <div className="control-divider"/>
-        <small className="control-label">MANEUVER</small>
-        <div className="maneuvers"><button onClick={()=>maneuver('boost')}>BOOST <b>−8</b></button><button onClick={()=>maneuver('brake')}>STABILISE <b>+9</b></button><button onClick={()=>maneuver('reroute')}>REROUTE <b>↻</b></button></div>
-        <button className="launch-button" onClick={()=>setRunning(v=>!v)}>{running?'PAUSE MISSION':'LAUNCH LYKA-01'} <span>↗</span></button>
-        <button className="deep-scan" onClick={()=>setScan(v=>!v)}>{scan?'CLOSE SCAN':'OPEN DEEP SCAN'}</button>
-        {scan&&<div className="deep-scan-box"><span>DEEP SCAN / 06</span><b>ANIK-032</b><p>ORBITAL SIGNAL: STABLE<br/>UNKNOWN OBJECTS: 03<br/>GHEE RESERVE: DETECTED<br/>MATHS SIR TRANSMISSION: ACTIVE</p></div>}
-      </aside>
-    </Reveal>
-  </div>
+export default function Mission(){
+ const {spend}=useSite();
+ const [running,setRunning]=useState(false),[fuel,setFuel]=useState(100),[stability,setStability]=useState(100),[score,setScore]=useState(0),[gate,setGate]=useState(0),[event,setEvent]=useState(orbitEvents[0]),[scan,setScan]=useState(false),[combo,setCombo]=useState(0),[mode,setMode]=useState('orbit'),[secret,setSecret]=useState(null);
+ useEffect(()=>{if(!running)return;const id=setInterval(()=>{setGate(v=>(v+1)%16);setFuel(v=>Math.max(0,v-1));setStability(v=>Math.max(0,v-(Math.random()>.78?3:0)));if(Math.random()>.72)setEvent(orbitEvents[Math.floor(Math.random()*orbitEvents.length)])},650);return()=>clearInterval(id)},[running]);
+ const maneuver=t=>{if(t==='boost'){setFuel(v=>Math.max(0,v-10));setStability(v=>Math.max(0,v-4));setScore(v=>v+8)}if(t==='stabilise'){setStability(v=>Math.min(100,v+12));setScore(v=>v+5)}if(t==='reroute'){setGate(v=>(v+5)%16);setFuel(v=>Math.max(0,v-4));setScore(v=>v+12)}if(t==='cloak'){setFuel(v=>Math.max(0,v-15));setScore(v=>v+30);setSecret('CLOAKED. The ship has become suspiciously quiet.')}spend(t==='boost'?2:0)};
+ const reset=()=>{setRunning(false);setFuel(100);setStability(100);setScore(0);setGate(0);setCombo(0);setSecret(null)};
+ return <div className="page mission-page">
+  <div className="page-title mission-title"><div><span className="eyebrow">ROOM 03 / LYKA-01 / FLIGHT DECK</span><h1>Orbit <em>control.</em></h1><p className="lede">A cleaner flight deck: route gates, resource management, secret maneuvers and a hidden deep-space layer.</p></div><div className="mission-score"><span>SCORE</span><b>{String(score).padStart(4,'0')}</b><small>COMBO / {combo} · SECTOR 032</small></div></div>
+  <div className="mission-modebar glass"><button className={mode==='orbit'?'active':''} onClick={()=>setMode('orbit')}>ORBIT</button><button className={mode==='deep'?'active':''} onClick={()=>setMode('deep')}>DEEP SPACE</button><span>FUEL {fuel}% · STABILITY {stability}%</span><button onClick={reset}>RESET ↻</button></div>
+  <Reveal className="mission-game">
+   <section className="flight-map"><div className="map-top"><span>{mode==='orbit'?'LIVE ORBIT / SECTOR 032':'DEEP SPACE / UNKNOWN SECTOR'}</span><b>{running?'● TRACKING':'○ STANDBY'}</b></div><div className="space-grid"/><div className={'planet-large '+(mode==='deep'?'deep-planet':'')}><span>{mode==='deep'?'UNKNOWN':'EARTH'}<br/>03</span></div><div className="orbit-path path-a"/><div className="orbit-path path-b"/><div className="route-gates">{Array.from({length:16},(_,i)=><i key={i} className={gate===i?'hit':''} style={{transform:'rotate('+i*22.5+'deg) translateY(-220px)'}}/>)}</div><div className="ship" style={{transform:'rotate('+gate*22.5+'deg) translateY(-220px)'}}><b>LYKA</b></div><div className="map-readout"><small>{mode==='deep'?'ANOMALY SIGNAL':'TRANSMISSION'}</small><p>{secret||event}</p></div><div className="scan-line"/></section>
+   <aside className="mission-control glass"><div className="control-head"><span>MISSION CONTROL</span><b>{running?'LIVE':'PAUSED'}</b></div><div className="flight-stat"><div><span>FUEL</span><b>{fuel}%</b></div><i><b style={{width:fuel+'%'}}/></i></div><div className="flight-stat"><div><span>STABILITY</span><b>{stability}%</b></div><i><b style={{width:stability+'%'}}/></i></div><div className="control-divider"/><small className="control-label">MANEUVER DECK</small><div className="maneuvers"><button onClick={()=>maneuver('boost')}>BOOST <b>−10</b></button><button onClick={()=>maneuver('stabilise')}>STABILISE <b>+12</b></button><button onClick={()=>maneuver('reroute')}>REROUTE <b>+12</b></button><button onClick={()=>maneuver('cloak')}>CLOAK <b>SECRET</b></button></div><button className="launch-button" onClick={()=>setRunning(v=>!v)}>{running?'PAUSE MISSION':'LAUNCH LYKA-01'} <span>↗</span></button><button className="deep-scan" onClick={()=>setScan(v=>!v)}>{scan?'CLOSE DEEP SCAN':'OPEN DEEP SCAN'}</button>{scan&&<div className="deep-scan-box"><span>DEEP SCAN / 10</span><b>ANIK-032</b><p>UNKNOWN OBJECTS: 07<br/>SIGNAL: NON-HUMAN<br/>GHEE RESERVE: DETECTED<br/>MATHS SIR: ACTIVE</p></div>}</aside>
+  </Reveal>
+ </div>
 }
