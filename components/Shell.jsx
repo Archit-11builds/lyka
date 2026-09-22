@@ -22,6 +22,9 @@ export function Shell({ children }) {
   const [step, setStep] = useState(0);
   const [q, setQ] = useState(() => sixQuestions[Math.floor(Math.random() * sixQuestions.length)]);
   const [msg, setMsg] = useState('');
+  const [hunt, setHunt] = useState([]);
+  const [updateOpen, setUpdateOpen] = useState(false);
+  const [hint, setHint] = useState(false);
 
   useEffect(() => {
     document.body.classList.toggle('locked', six);
@@ -105,6 +108,19 @@ export function Shell({ children }) {
     }
   };
 
+  const revealSecret = (index) => {
+    if (hunt.includes(index)) return;
+    const next = [...hunt, index];
+    setHunt(next);
+    try { localStorage.setItem('lyka-hunt', JSON.stringify(next)); } catch {}
+    window.dispatchEvent(new CustomEvent('lyka:secret', { detail: { index, remaining: 10 - next.length } }));
+  };
+
+  const closeUpdate = () => {
+    setUpdateOpen(false);
+    try { localStorage.setItem('lyka-update-seen', '1'); } catch {}
+  };
+
   const openSix = () => {
     playSixWarning();
     setMenu(false);
@@ -149,7 +165,7 @@ export function Shell({ children }) {
             ))}
           </nav>
           <div className="nav-right">
-            <span className="ghee-pill"><i />GHEE <b>{ghee}%</b></span>
+            <span className="hunt-pill" title="Secret Hunt progress">HUNT <b>{hunt.length}/10</b></span><span className="ghee-pill"><i />GHEE <b>{ghee}%</b></span>
             <button className="command-button" onClick={() => setCmd(true)}><kbd>⌘</kbd><span>COMMAND</span><b>K</b></button>
             <button className="index-button" onClick={() => setMenu((v) => !v)}><i /><span>{menu ? 'CLOSE' : 'INDEX'}</span></button>
           </div>
@@ -200,6 +216,8 @@ export function Shell({ children }) {
       )}
 
       <main>{children}</main>
+      <div className="hunt-hotspot" onClick={() => revealSecret(([...links,...allLinks].findIndex(x => x[0] === path) + 10) % 10)} aria-label="Secret location"><span>·</span></div>
+      {updateOpen && !six && <div className="update-overlay"><div className="update-card"><span className="eyebrow">IMPORTANT UPDATE / LYKA 032</span><h2>The hunt<br/><em>is live.</em></h2><p>There are <b>10 hidden secret locations</b> across the site. Find them all and you can claim the <b>₹100 Archit reward</b>.</p><div className="update-grid"><span>01 / Explore every room.</span><span>02 / Look for tiny suspicious details.</span><span>03 / Use the hunt hints when stuck.</span><span>04 / Progress is saved on this browser.</span><span>05 / The final secret is deliberately difficult.</span><span>06 / 10/10 = reward unlocked.</span></div><button className="button hot" onClick={closeUpdate}>UNDERSTOOD — START HUNTING ↗</button><button className="update-hint" onClick={()=>setHint(v=>!v)}>{hint?'Hint: inspect the interface, not just the content.':'NEED A STARTING HINT?'}</button>{hint&&<small className="update-hint-text">The smallest things on LYKA are sometimes the loudest.</small>}</div></div>}
       <GlobalFX />
       <Danger />
 
