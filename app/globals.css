@@ -559,3 +559,28 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--violet);outline-off
   .hunt-panel h3{font-size:54px!important}
   .hunt-toast{max-width:calc(100vw - 28px);white-space:normal;text-align:center}
 }
+
+/* FIELD ARTIFACT HUNT — replaces generic hotspot dots */
+.hunt-hotspot{width:38px!important;height:38px!important;margin:-19px 0 0 -19px!important;border:0!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important}
+.hunt-hotspot:before{content:'';position:absolute;inset:4px;border:1px solid rgba(21,21,21,.28);border-radius:11px;background:rgba(250,248,243,.84);backdrop-filter:blur(12px);box-shadow:0 10px 30px rgba(39,34,26,.12),inset 0 1px rgba(255,255,255,.8);transform:rotate(45deg);transition:.3s}
+.hunt-hotspot:after{content:'+';position:absolute;inset:0;display:grid;place-items:center;color:var(--coral);font:500 15px system-ui;transition:.3s}
+.hunt-artifact-core{position:absolute!important;left:50%!important;top:50%!important;width:7px!important;height:7px!important;margin:-3.5px 0 0 -3.5px!important;border-radius:2px!important;background:var(--coral)!important;z-index:2;box-shadow:0 0 18px rgba(223,112,91,.5)}
+.hunt-artifact-ring{position:absolute!important;left:50%!important;top:50%!important;width:24px!important;height:24px!important;margin:-12px 0 0 -12px!important;border:1px dashed rgba(111,86,232,.5);border-radius:50%;z-index:1;animation:huntArtifactSpin 5s linear infinite}
+.hunt-hotspot b{top:45px!important;transform:translateX(-50%) translateY(7px)!important;background:#151515!important;border-radius:6px!important;padding:6px 8px!important;font-size:5px!important;letter-spacing:.16em!important}
+.hunt-hotspot:hover:before{transform:rotate(45deg) scale(1.12);border-color:var(--coral);box-shadow:0 18px 40px rgba(39,34,26,.18),0 0 0 7px rgba(223,112,91,.06)}
+.hunt-hotspot:hover:after{transform:rotate(45deg);color:var(--violet)}
+.hunt-hotspot:hover .hunt-artifact-ring{animation-duration:1.2s}
+.hunt-hotspot:hover b{opacity:1!important;transform:translateX(-50%) translateY(0)!important}
+.hunt-hotspot.hard{width:32px!important;height:32px!important;margin:-16px 0 0 -16px!important;opacity:.82}
+.hunt-hotspot.hard .hunt-artifact-ring{width:19px!important;height:19px!important;margin:-9.5px 0 0 -9.5px!important}
+.hunt-hotspot.genius{width:28px!important;height:28px!important;margin:-14px 0 0 -14px!important}
+.hunt-hotspot.genius:before{background:#151515!important;border-color:#151515!important}
+.hunt-hotspot.genius:after{color:#fff!important;font-size:12px}
+.hunt-hotspot.genius .hunt-artifact-core{background:#fff!important}
+@keyframes huntArtifactSpin{to{transform:rotate(360deg)}}
+@media(max-width:800px){
+ .hunt-hotspot{width:46px!important;height:46px!important;margin:-23px 0 0 -23px!important}
+ .hunt-hotspot.hard{width:40px!important;height:40px!important;margin:-20px 0 0 -20px!important}
+ .hunt-hotspot.genius{width:36px!important;height:36px!important;margin:-18px 0 0 -18px!important}
+ .hunt-hotspot b{display:none}
+}
