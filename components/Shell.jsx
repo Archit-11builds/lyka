@@ -144,13 +144,15 @@ export function Shell({ children }) {
     <div className="app-shell">
       {!six && (
         <header className="nav-shell">
-          <TransitionLink href="/hq" className="brand">
-            <span className="brand-icon"><img src="/lyka-mark.svg" alt="LYKA" /></span>
+          <TransitionLink href="/hq" className="brand" aria-label="LYKA home">
+            <span className="brand-icon"><img src="/lyka-mark.svg" alt="" /></span>
             <span className="brand-copy"><b>LYKA</b><small>FIELD SYSTEM / 032</small></span>
           </TransitionLink>
-          <nav>
-            {links.map(([href, label]) => (
-              <TransitionLink key={href} href={href} className={path === href ? 'active' : ''}>{label}</TransitionLink>
+          <nav className="main-nav" aria-label="LYKA navigation">
+            {allLinks.map(([href, label], index) => (
+              <TransitionLink key={href} href={href} className={path === href ? 'active' : ''}>
+                <span>{label}</span>{index >= links.length && <i>NEW</i>}
+              </TransitionLink>
             ))}
           </nav>
           <div className="nav-right">
