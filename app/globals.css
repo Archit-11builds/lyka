@@ -103,3 +103,26 @@ body.six-locked{overflow:hidden!important;overscroll-behavior:none}.six-root{pos
 .notes-list article:hover>b{background:var(--ink);color:#fff;transform:rotate(45deg)}
 .closing{position:relative}
 @media(max-width:800px){.notes-layout{grid-template-columns:1fr;gap:35px}.field-notes{margin-top:95px}.notes-list article{min-height:125px}}
+
+/* SIX MODE — cinematic warning polish */
+.six-root{background:
+radial-gradient(900px 600px at 50% 42%,rgba(118,86,232,.16),transparent 62%),
+linear-gradient(135deg,#e8e2d8,#d9d1c5)!important}
+.six-root:before{background:
+linear-gradient(90deg,transparent 49.9%,rgba(118,86,232,.12) 50%,transparent 50.1%),
+repeating-linear-gradient(0deg,transparent 0 7px,rgba(23,23,24,.025) 8px),
+radial-gradient(circle at 50% 45%,rgba(118,86,232,.16),transparent 48%)!important}
+.six-root:after{inset:12px!important;border:1px solid rgba(118,86,232,.24)!important;box-shadow:inset 0 0 100px rgba(118,86,232,.08),0 0 0 1px rgba(255,255,255,.35)!important}
+.six-panel{width:min(980px,calc(100% - 34px))!important;min-height:620px!important;margin:40px auto!important;background:rgba(248,246,241,.82)!important;backdrop-filter:blur(24px) saturate(125%)!important;-webkit-backdrop-filter:blur(24px) saturate(125%)!important}
+.six-top{display:flex;justify-content:space-between;align-items:center;font:600 8px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.16em;color:#77736b}
+.six-top b{color:var(--coral);font-size:10px}
+.six-panel h1{font-size:clamp(62px,9vw,120px)!important;line-height:.78!important;letter-spacing:-.09em!important;margin:30px 0 15px!important}
+.six-panel h1 i{font-family:Georgia,serif!important}
+.six-panel>p{max-width:520px;color:#77736b;font-size:12px;line-height:1.7}
+.six-badge{position:absolute;right:38px;top:72px;width:64px;height:64px;border-radius:18px!important;display:grid;place-items:center;font:800 30px system-ui!important}
+.six-question{margin-top:42px!important;background:rgba(255,255,255,.58)!important}
+.six-question h2{font-size:clamp(25px,3vw,40px)!important;line-height:1.05!important;letter-spacing:-.045em!important;max-width:760px}
+.six-options button{font-size:10px!important;font-weight:600!important;letter-spacing:.02em!important}
+.six-options button:active{transform:scale(.98)}
+.six-rain{opacity:.12!important}
+@media(max-width:600px){.six-panel{min-height:calc(100vh - 36px)!important;margin:18px auto!important}.six-badge{right:22px;top:62px;width:48px;height:48px;font-size:23px!important}.six-panel h1{font-size:52px!important}.six-panel>p{font-size:11px}.six-question{margin-top:32px!important}}
