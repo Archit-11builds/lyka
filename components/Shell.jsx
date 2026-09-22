@@ -12,7 +12,7 @@ const links = [
   ['/hq', 'HQ'], ['/roast', 'Roast'], ['/maths-sir', 'Maths'],
   ['/mission', 'Orbit'], ['/memes', 'Vault'], ['/archive', 'Archive'],
 ];
-const allLinks = [...links, ['/photos', 'Photos'], ['/about', 'About']];
+const allLinks = [...links, ['/lmao', 'LMAO Lab'], ['/photos', 'Photos'], ['/about', 'About']];
 
 export function Shell({ children }) {
   const path = usePathname();
