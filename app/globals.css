@@ -191,3 +191,33 @@ body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,
 .command-input span{font-family:inherit;font-size:13px;font-weight:600;letter-spacing:0}
 .six-panel h1{font-family:inherit;font-size:clamp(54px,8vw,92px);line-height:.88;letter-spacing:-.075em}.six-panel p{font-family:inherit;font-size:14px;line-height:1.65}.six-question h2{font-family:inherit;font-size:clamp(22px,3vw,34px);line-height:1.08;letter-spacing:-.035em}.six-options button{font-family:inherit;font-size:14px;font-weight:600;letter-spacing:0}
 @media(max-width:600px){.nav-shell nav a{font-size:10px}.hero-desc,.intro-block p,.feature-body p,.study-panel p{font-size:13px}.drawer-links a strong,.drawer-six strong{font-size:18px}.command-grid a span,.command-grid button span{font-size:15px}.six-panel{padding:24px!important}.six-panel h1{font-size:48px}.six-question{padding:22px}.six-question h2{font-size:22px}}
+
+/* FINAL TEXT SYSTEM — overrides legacy compressed typography */
+html,body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important}
+.nav-shell nav a{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-size:12px!important;font-weight:600!important;letter-spacing:-.01em!important}
+.ghee-pill,.menu-button,.command-button,.index-button{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-size:11px!important;font-weight:600!important;letter-spacing:0!important}
+.brand b{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-size:18px!important;font-weight:800!important;letter-spacing:-.05em!important}
+.brand small{font-family:ui-monospace,SFMono-Regular,Menlo,monospace!important;font-size:7px!important;letter-spacing:.12em!important}
+.kicker,.lux-label,.hero-top,.feature-body small,.feature-num,.art-meta span,.art-float,.art-caption,.scroll-mark,.challenge-number,.under-link,.stat-row small{font-family:ui-monospace,SFMono-Regular,Menlo,monospace!important}
+.hero-desc{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-size:16px!important;line-height:1.65!important;letter-spacing:0!important}
+.lux-btn{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-size:12px!important;font-weight:700!important;letter-spacing:0!important}
+.intro-block p{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-size:16px!important;line-height:1.7!important}
+.feature-body h3{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-weight:750!important;letter-spacing:-.055em!important}
+.feature-body p{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-size:13px!important;line-height:1.65!important}
+.drawer-hero h2{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-weight:750!important;letter-spacing:-.06em!important}
+.drawer-hero p{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-size:15px!important;line-height:1.6!important}
+.drawer-links a strong,.drawer-six strong{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-size:22px!important;font-weight:700!important;letter-spacing:-.035em!important}
+.command-grid a span,.command-grid button span{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-size:16px!important;font-weight:650!important;letter-spacing:-.015em!important}
+.command-input span{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-size:14px!important;font-weight:600!important}
+.study-panel p{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-size:14px!important;line-height:1.7!important}
+.six-panel h1{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-weight:800!important;letter-spacing:-.075em!important}
+.six-panel p,.six-question h2,.six-options button{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important}
+.six-panel p{font-size:15px!important;line-height:1.65!important}
+.six-question h2{font-size:clamp(22px,3vw,34px)!important;line-height:1.15!important;letter-spacing:-.03em!important}
+.six-options button{font-size:14px!important;font-weight:650!important}
+@media(max-width:600px){
+ .nav-shell nav a{font-size:11px!important}
+ .hero-desc,.intro-block p{font-size:14px!important}
+ .feature-body p{font-size:13px!important}
+ .drawer-links a strong,.drawer-six strong{font-size:20px!important}
+}
