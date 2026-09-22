@@ -13,7 +13,7 @@ const destinations=[
 
 export default function Mission(){
  const{spend}=useSite();
- const[phase,setPhase]=useState(0),[fuel,setFuel]=useState(100),[hull,setHull]=useState(100),[oxygen,setOxygen]=useState(100),[distance,setDistance]=useState(0),[score,setScore]=useState(0),[destination,setDestination]=useState(destinations[0]),[message,setMessage]=useState('Select a destination, then launch from Earth.'),[running,setRunning]=useState(false),[event,setEvent]=useState(orbitEvents[0]),[scan,setScan]=useState(false),[engine,setEngine]=useState(0),[landed,setLanded]=useState(false);
+ const[phase,setPhase]=useState(0),[fuel,setFuel]=useState(100),[hull,setHull]=useState(100),[oxygen,setOxygen]=useState(100),[distance,setDistance]=useState(0),[score,setScore]=useState(0),[destination,setDestination]=useState(destinations[0]),[message,setMessage]=useState('Select a destination, then launch from Earth.'),[running,setRunning]=useState(false),[event,setEvent]=useState(orbitEvents[0]),[scan,setScan]=useState(false),[engine,setEngine]=useState(0),[landed,setLanded]=useState(false),[shield,setShield]=useState(100),[cargo,setCargo]=useState(0),[hazard,setHazard]=useState(false);
 
  useEffect(()=>{
   if(!running)return;
@@ -21,8 +21,8 @@ export default function Mission(){
    setEngine(v=>(v+1)%12);
    setOxygen(v=>Math.max(0,v-.35));
    setFuel(v=>Math.max(0,v-.45));
-   if(Math.random()>.84)setEvent(orbitEvents[Math.floor(Math.random()*orbitEvents.length)]);
-   if(phase>=3)setDistance(v=>Math.min(destination.distance,v+1.8));
+   if(Math.random()>.72){const e=orbitEvents[Math.floor(Math.random()*orbitEvents.length)];setEvent(e);if(Math.random()>.62){setHazard(true);setMessage('WARNING / '+e);}}
+   if(phase>=3)setDistance(v=>Math.min(destination.distance,v+1.45));
   },700);
   return()=>clearInterval(id);
  },[running,phase,destination.distance]);
@@ -30,7 +30,7 @@ export default function Mission(){
  useEffect(()=>{
   if(!running)return;
   if(phase===1&&fuel<82){setPhase(2);setMessage('ORBIT ACHIEVED. Earth is behind you.');}
-  if(phase>=3&&distance>=destination.distance){setPhase(5);setRunning(false);setLanded(true);setMessage(destination.name+' ARRIVAL CONFIRMED. Welcome to the surface.');setScore(v=>v+100);}
+  if(phase>=3&&distance>=destination.distance){setPhase(5);setRunning(false);setLanded(true);setMessage(destination.name+' ARRIVAL CONFIRMED. Welcome to the surface.');setScore(v=>v+100+cargo*15);setHazard(false);}
   if(oxygen<=0||fuel<=0||hull<=0){setRunning(false);setMessage('MISSION ABORTED. Resources exhausted. Return to Earth and retry.');}
  },[fuel,oxygen,hull,distance,phase,running,destination.name,destination.distance]);
 
@@ -41,12 +41,13 @@ export default function Mission(){
   else if(phase===3){setPhase(4);setMessage('APPROACH VECTOR SET. Prepare for arrival.');}
   else if(phase===5){setPhase(0);setDistance(0);setFuel(100);setOxygen(100);setHull(100);setScore(0);setLanded(false);setMessage('LYKA-01 returned to Earth. Select a new mission.');}
  };
+ const collect=()=>{if(!running||phase<3)return;setCargo(v=>v+1);setFuel(v=>Math.min(100,v+14));setScore(v=>v+18);setMessage('CARGO RECOVERED. +14 FUEL. '+(cargo+1)+' OBJECTS SECURED.');};
  const maneuver=t=>{
   if(t==='boost'&&fuel>=8){setFuel(v=>Math.max(0,v-8));setHull(v=>Math.max(0,v-2));setDistance(v=>Math.min(destination.distance,v+5));setScore(v=>v+12);spend(1);setMessage('BOOST BURN. '+Math.round(distance)+' KM / COURSE ADVANCED.');}
   if(t==='brake'){setFuel(v=>Math.max(0,v-3));setHull(v=>Math.min(100,v+4));setScore(v=>v+5);setMessage('BRAKING VECTOR STABLE.');}
-  if(t==='scan'){setScan(v=>!v);setScore(v=>v+3);}
+  if(t==='scan'){setScan(v=>!v);setScore(v=>v+3);setMessage(scan?'SCAN STOWED.':'DEEP SCAN FOUND A DRIFTING SUPPLY CACHE.');} if(t==='shield'&&fuel>=5){setFuel(v=>v-5);setShield(v=>Math.min(100,v+35));setMessage('SHIELD CHARGED.');}
  };
- const reset=()=>{setPhase(0);setFuel(100);setHull(100);setOxygen(100);setDistance(0);setScore(0);setRunning(false);setLanded(false);setScan(false);setMessage('Select a destination, then launch from Earth.')};
+ const reset=()=>{setPhase(0);setFuel(100);setHull(100);setOxygen(100);setDistance(0);setScore(0);setRunning(false);setLanded(false);setScan(false);setShield(100);setCargo(0);setHazard(false);setMessage('Select a destination, then launch from Earth.')};
  const progress=useMemo(()=>Math.min(100,phase===0?0:phase===1?12:phase===2?25:25+(distance/destination.distance)*75),[phase,distance,destination.distance]);
 
  return <div className="page mission-page mission-v4">
@@ -60,16 +61,16 @@ export default function Mission(){
     <div className="sun-core"/><div className="earth-body"><span>EARTH</span></div><div className={'target-planet '+destination.color+' '+(phase===5?'arrived':'')}><span>{destination.name}</span></div>
     <div className="space-route"><i style={{width:progress+'%'}}/></div>
     <div className="space-ship" style={{left:Math.max(8,Math.min(88,progress))+'%'}}><b>LYKA-01</b><i/></div>
-    <div className="flight-message"><small>FLIGHT COMPUTER</small><p>{message}</p><span>EVENT / {event}</span></div>
+    <div className="flight-message"><small>FLIGHT COMPUTER</small><p>{message}</p><span>EVENT / {event}</span>{hazard&&<b className="hazard-alert">⚠ HAZARD WINDOW / SHIELD ADVISED</b>}</div>
     <div className="planet-readout"><span>RANGE</span><b>{phase>=3?Math.round(distance):'—'}</b><small>{phase>=3?'AU':'KM'}</small></div>
     {landed&&<div className="arrival-badge">✓ PLANET ARRIVAL<br/><small>MISSION COMPLETE</small></div>}
    </section>
    <aside className="mission-control glass"><div className="control-head"><span>MISSION CONTROL</span><b>{running?'LIVE':'PAUSED'}</b></div>
     <div className="resource"><span>FUEL</span><b>{Math.round(fuel)}%</b><i><b style={{width:fuel+'%'}}/></i></div>
     <div className="resource"><span>HULL</span><b>{Math.round(hull)}%</b><i><b style={{width:hull+'%'}}/></i></div>
-    <div className="resource"><span>OXYGEN</span><b>{Math.round(oxygen)}%</b><i><b style={{width:oxygen+'%'}}/></i></div>
+    <div className="resource"><span>OXYGEN</span><b>{Math.round(oxygen)}%</b><i><b style={{width:oxygen+'%'}}/></i></div><div className="resource"><span>SHIELD</span><b>{Math.round(shield)}%</b><i><b style={{width:shield+'%'}}/></i></div><div className="resource"><span>CARGO</span><b>{cargo}</b><i><b style={{width:Math.min(100,cargo*20)+'%'}}/></i></div>
     <div className="control-divider"/><small className="control-label">FLIGHT DECK</small>
-    <div className="maneuvers"><button disabled={!running||phase<3} onClick={()=>maneuver('boost')}>BOOST <b>−8 F</b></button><button disabled={!running} onClick={()=>maneuver('brake')}>BRAKE <b>−3 F</b></button><button onClick={()=>maneuver('scan')}>DEEP SCAN <b>⌁</b></button></div>
+    <div className="maneuvers"><button disabled={!running||phase<3} onClick={()=>maneuver('boost')}>BOOST <b>−8 F</b></button><button disabled={!running} onClick={()=>maneuver('brake')}>BRAKE <b>−3 F</b></button><button disabled={!running||phase<3} onClick={collect}>COLLECT <b>+CARGO</b></button><button onClick={()=>maneuver('scan')}>DEEP SCAN <b>⌁</b></button><button disabled={!running||phase<3} onClick={()=>maneuver('shield')}>SHIELD <b>−5 F</b></button></div>
     <button className="launch-button" onClick={launch}>{phase===0?'LAUNCH FROM EARTH':phase===2?'ENTER DEEP SPACE':phase===3?'BEGIN APPROACH':phase===5?'RETURN TO EARTH':'FLIGHT ACTIVE'} <span>↗</span></button>
     {scan&&<div className="deep-scan-box"><span>DEEP SCAN / ACTIVE</span><b>{destination.name} SIGNAL</b><p>OBJECTS: {phase>=3?'07':'—'}<br/>GHEE RESERVE: DETECTED<br/>ANIK-032: TRACKED<br/>ROUTE: {Math.round(progress)}%</p></div>}
    </aside>
