@@ -43,6 +43,37 @@ export default function Home(){
    </div>
   </section>
 
+  <section className="manifesto-section reveal-block">
+   <div className="lux-label"><span>05 / THE MANIFESTO</span><span>NO EXPLANATION REQUIRED</span></div>
+   <div className="manifesto-layout">
+    <div><p className="section-index">LYKA / PRINCIPLE 01</p><h2>Make it<br/><em>unnecessarily good.</em></h2></div>
+    <div className="manifesto-copy"><p>There is no practical reason for this much detail. That is precisely why it exists.</p><span>— LYKA FIELD OFFICE</span></div>
+   </div>
+  </section>
+
+  <section className="signal-section reveal-block">
+   <div className="lux-label"><span>06 / LIVE SIGNAL</span><span>FIELD TELEMETRY</span></div>
+   <div className="signal-layout">
+    <div className="signal-main"><small>ANIK / CURRENT STATE</small><strong>84<span>%</span></strong><div className="signal-wave"><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/><i/></div></div>
+    <div className="signal-side"><article><span>01</span><b>ENERGY</b><em>UNSTABLE</em></article><article><span>02</span><b>CHAOS</b><em>OPTIMAL</em></article><article><span>03</span><b>ARCHIVE</b><em>EXPANDING</em></article></div>
+   </div>
+  </section>
+
+  <section className="quote-section reveal-block">
+   <div className="quote-mark">“</div>
+   <div><p className="section-index">07 / UNOFFICIAL RECORD</p><h2>Some websites<br/>need a reason.<br/><em>This one needs a vibe.</em></h2><p className="quote-caption">A completely unnecessary statement, preserved permanently.</p></div>
+  </section>
+
+  <section className="archive-strip reveal-block">
+   <div className="lux-label"><span>08 / ARCHIVE STRIP</span><span>SELECTED FRAGMENTS</span></div>
+   <div className="strip-grid"><div className="strip-card one"><small>FRAME 001</small><b>THE<br/>START.</b></div><div className="strip-card two"><small>FRAME 002</small><b>THE<br/>CHAOS.</b></div><div className="strip-card three"><small>FRAME 003</small><b>THE<br/>LEGACY.</b></div></div>
+  </section>
+
+  <section className="final-index reveal-block">
+   <div className="final-index-top"><span>09 / FINAL CHECK</span><span>LYKA FIELD SYSTEM</span></div>
+   <div className="final-index-body"><div><small>IF YOU MADE IT THIS FAR</small><h2>You were<br/><em>supposed to.</em></h2></div><TransitionLink href="/archive" className="lux-btn fill">ENTER THE ARCHIVE <b>↗</b></TransitionLink></div>
+  </section>
+
   <section className="closing"><div className="closing-grid" aria-hidden="true"><i/><i/><i/><i/></div><div className="lux-label">04 / END OF TRANSMISSION</div><h2>COME FOR THE<br/><em>DESIGN.</em><br/>STAY FOR THE CHAOS.</h2><TransitionLink href="/hq" className="lux-btn fill">OPEN HQ <b>↗</b></TransitionLink></section>
  </div>
 }
