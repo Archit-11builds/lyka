@@ -26,6 +26,7 @@ export function Shell({ children }) {
     const [step, setStep] = useState(0);
   const [q, setQ] = useState(() => sixQuestions[Math.floor(Math.random() * sixQuestions.length)]);
   const [msg, setMsg] = useState('');
+  const [sixWarning, setSixWarning] = useState(false);
   const sixAudioRef = useRef(null);
   const [hunt, setHunt] = useState([]);
   const [brandTaps, setBrandTaps] = useState(0);
