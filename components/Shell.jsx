@@ -27,6 +27,7 @@ export function Shell({ children }) {
   const [q, setQ] = useState(() => sixQuestions[Math.floor(Math.random() * sixQuestions.length)]);
   const [msg, setMsg] = useState('');
   const [hunt, setHunt] = useState([]);
+  const [brandTaps, setBrandTaps] = useState(0);
   const [hint, setHint] = useState(false);
   const [huntPanel, setHuntPanel] = useState(false);
   const [huntToast, setHuntToast] = useState('');
@@ -38,6 +39,26 @@ export function Shell({ children }) {
     if (!six) return () => document.body.classList.remove('locked');
     return () => document.body.classList.remove('locked');
   }, [six]);
+
+  useEffect(() => {
+    const onScroll = () => {
+      if (window.scrollY > Math.max(420, document.documentElement.scrollHeight * 0.58)) revealSecret(1);
+    };
+    const onClick = (e) => {
+      const el = e.target.closest?.('[data-lyka-hunt="signal"]');
+      if (el) revealSecret(Number(el.dataset.huntIndex));
+    };
+    const onSecret = (e) => {
+      const index = Number(e.detail?.index);
+      if (Number.isInteger(index)) {
+        try { localStorage.setItem('lyka-hunt', JSON.stringify([...new Set([...hunt, index])])); } catch {}
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('click', onClick);
+    window.addEventListener('lyka:secret', onSecret);
+    return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('click', onClick); window.removeEventListener('lyka:secret', onSecret); };
+  }, [hunt]);
 
   useEffect(() => {
     const key = (e) => {
@@ -114,7 +135,8 @@ export function Shell({ children }) {
     setHunt(next);
     try { localStorage.setItem('lyka-hunt', JSON.stringify(next)); } catch {}
     const remaining = 10 - next.length;
-    setHuntToast(next.length === 10 ? 'ALL 10 FOUND — ₹100 REWARD UNLOCKED' : 'SECRET ' + (index + 1) + ' FOUND — ' + remaining + ' REMAINING');
+    const names = ['BRAND SIGNAL','DEEP SCROLL','GHEE RESERVE','MATHS VECTOR','ORBIT CHECK','SEARCH TRACE','COMMAND TRACE','AI SIGNAL','INDEX TRACE','FIELD PHRASE'];
+    setHuntToast(next.length === 10 ? 'ALL 10 FIELD TASKS COMPLETE — CHALLENGE UNLOCKED' : names[index] + ' COMPLETE — ' + remaining + ' REMAINING');
     setHuntCelebration({ index, final: next.length === 10 });
     window.setTimeout(() => setHuntToast(''), 2600);
     window.setTimeout(() => setHuntCelebration(null), 2100);
@@ -124,7 +146,7 @@ export function Shell({ children }) {
   useEffect(()=>{ if(hunt.length===10){setEndgame(true)} },[hunt.length]);
 
   useEffect(() => { const onKey=e=>{ if(e.key==='/' && !['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)){e.preventDefault();setCommandOpen(true)} if(e.key==='Escape')setCommandOpen(false)}; window.addEventListener('keydown',onKey); return ()=>window.removeEventListener('keydown',onKey)}, []);
-  const runCommand = value => { const map={hq:'/hq',roast:'/roast',maths:'/maths-sir',orbit:'/mission',vault:'/memes',archive:'/archive',lmao:'/lmao',live:'/live',incidents:'/incidents',photos:'/photos',about:'/about',ai:'/ai'}; const key=value.trim().toLowerCase().replace(/^\//,''); if(map[key]){setCommandOpen(false);router.push(map[key])} };
+  const runCommand = value => { if(value.trim().toLowerCase()==='field-032'){revealSecret(6);setCommandOpen(false);setCommand('');return;} const map={hq:'/hq',roast:'/roast',maths:'/maths-sir',orbit:'/mission',vault:'/memes',archive:'/archive',lmao:'/lmao',live:'/live',incidents:'/incidents',photos:'/photos',about:'/about',ai:'/ai'}; const key=value.trim().toLowerCase().replace(/^\//,''); if(map[key]){setCommandOpen(false);router.push(map[key])} };
   const enterLyka = () => { setWelcomeLeaving(true); window.setTimeout(() => setWelcomeOpen(false), 760); };
 
   const openSix = () => {
@@ -162,7 +184,7 @@ export function Shell({ children }) {
     <div className="app-shell">
       {!six && (
         <header className="nav-shell">
-          <TransitionLink href="/hq" className="brand" aria-label="LYKA home">
+          <TransitionLink href="/hq" className="brand" aria-label="LYKA home" onClick={()=>{const n=brandTaps+1;setBrandTaps(n);if(n>=3)revealSecret(0)}} data-lyka-hunt="signal" data-hunt-index="0">
             <span className="brand-icon"><img src="/lyka-mark.svg" alt="" /></span>
             <span className="brand-copy"><b>LYKA</b><small>FIELD SYSTEM / 032</small></span>
           </TransitionLink>
@@ -183,10 +205,10 @@ export function Shell({ children }) {
         <div className="ghee-catcher-head"><span>LYKA / RESOURCE LAB</span><button onClick={()=>setGheeOpen(false)}>×</button></div>
         <div className="ghee-catcher-read"><div><small>GHEE RESERVE</small><strong>{ghee}<b>%</b></strong></div><span>+5 / CATCH</span></div>
         <div className="ghee-catcher-meter"><i style={{width:ghee+'%'}}/><span>{ghee}%</span></div>
-        <button className="ghee-catch-button" onClick={()=>{if(ghee<100){refill(Math.min(100,ghee+5));setGheeCatches(v=>v+1)}}} disabled={ghee>=100}><span>🥣</span><b>{ghee>=100?'RESERVE FULL':'CATCH GHEE'}</b><em>{ghee>=100?'100%':'CATCH #'+(gheeCatches+1)}</em></button>
+        <button className="ghee-catch-button" onClick={()=>{if(ghee<100){refill(Math.min(100,ghee+5));setGheeCatches(v=>v+1);revealSecret(2)}}} disabled={ghee>=100}><span>🥣</span><b>{ghee>=100?'RESERVE FULL':'CATCH GHEE'}</b><em>{ghee>=100?'100%':'CATCH #'+(gheeCatches+1)}</em></button>
         <div className="ghee-catcher-stats"><span>CATCHES <b>{gheeCatches}</b></span><span>COOL <b>{cool}</b></span><span>STATUS <b>{ghee>=80?'STABLE':'LOW'}</b></span></div>
       </div>}
-      {searchOpen && !six && <div className="lyka-search-overlay" onClick={()=>setSearchOpen(false)}><div className="lyka-search-panel" onClick={e=>e.stopPropagation()}><div className="search-head"><span>LYKA / GLOBAL INDEX</span><button onClick={()=>setSearchOpen(false)}>×</button></div><input autoFocus value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search rooms, systems, routes…"/><div className="search-results">{allLinks.filter(([href,label])=>(label+' '+href).toLowerCase().includes(search.toLowerCase())).map(([href,label],i)=><TransitionLink key={href} href={href} onClick={()=>setSearchOpen(false)}><b>{String(i+1).padStart(2,'0')}</b><span>{label}</span><em>{href}</em></TransitionLink>)}{!allLinks.some(([href,label])=>(label+' '+href).toLowerCase().includes(search.toLowerCase()))&&<p>NO MATCH / TRY ANOTHER SIGNAL.</p>}</div><small className="search-foot">ENTER A ROOM · ESC/CLOSE TO EXIT</small></div></div>}
+      {searchOpen && !six && <div className="lyka-search-overlay" onClick={()=>setSearchOpen(false)}><div className="lyka-search-panel" onClick={e=>e.stopPropagation()}><div className="search-head"><span>LYKA / GLOBAL INDEX</span><button onClick={()=>setSearchOpen(false)}>×</button></div><input autoFocus value={search} onChange={e=>{setSearch(e.target.value);if(e.target.value.trim().toLowerCase()==='lyka')revealSecret(5)}} onChange={e=>setSearch(e.target.value)} placeholder="Search rooms, systems, routes…"/><div className="search-results">{allLinks.filter(([href,label])=>(label+' '+href).toLowerCase().includes(search.toLowerCase())).map(([href,label],i)=><TransitionLink key={href} href={href} onClick={()=>setSearchOpen(false)}><b>{String(i+1).padStart(2,'0')}</b><span>{label}</span><em>{href}</em></TransitionLink>)}{!allLinks.some(([href,label])=>(label+' '+href).toLowerCase().includes(search.toLowerCase()))&&<p>NO MATCH / TRY ANOTHER SIGNAL.</p>}</div><small className="search-foot">ENTER A ROOM · ESC/CLOSE TO EXIT</small></div></div>}
 
       {menu && !six && (
         <div className="nav-overlay" onClick={() => setMenu(false)}>
@@ -232,7 +254,18 @@ export function Shell({ children }) {
       )}
 
       <main>{children}</main>
-      {huntPanel && !six && <div className="hunt-panel"><div><span className="eyebrow">LYKA / SECRET HUNT</span><button onClick={()=>setHuntPanel(false)}>×</button></div><h3>{hunt.length}/10 <em>found.</em></h3><div className="hunt-progress"><i style={{width:(hunt.length*10)+'%'}}/><span>{hunt.length*10}%</span></div><p>{hunt.length===10?'Every secret has been found. The ₹100 reward is unlocked.':'Ten tiny locations are hidden across the archive. Clues are casual on purpose — if you want the exact spot, you gotta look. Press H anytime to reopen this panel.'}</p><div className="hunt-hints">{[['LYKA','first screen pe ek chhoti si cheez ko ignore mat kar 👀'],['ROAST','screen ke kone pe thoda sus kuch hai'],['MATHS','yahan ek number bas number nahi hai bhai'],['ORBIT','route ko bhi dekh, sirf buttons ko nahi'],['VAULT','jo corner bilkul boring lag raha hai, wahi dekh'],['LMAO','games khatam nahi hote jab game khatam hota hai 💀'],['PHOTOS','photo dekh li? ab thoda idhar-udhar bhi scan kar'],['ABOUT','system kuch yaad rakhta hai... bas kya, woh dekh'],['ARCHIVE','files padh aur beech ki bakchodi notice kar'],['HQ','subject file mein ek thread loose chhoda hai']].map(([name,clue],i)=><div key={name} className={hunt.includes(i)?'found':''}><b>{String(i+1).padStart(2,'0')}</b><span>{hunt.includes(i)?'✓ FOUND':name+' — '+clue}</span></div>)}</div></div>}
+      {huntPanel && !six && <div className="hunt-panel"><div><span className="eyebrow">LYKA / SECRET HUNT</span><button onClick={()=>setHuntPanel(false)}>×</button></div><h3>{hunt.length}/10 <em>found.</em></h3><div className="hunt-progress"><i style={{width:(hunt.length*10)+'%'}}/><span>{hunt.length*10}%</span></div><p>{hunt.length===10?'Every field task is complete. The final challenge is unlocked.':'This is no logo hunt. LYKA hides actions, signals and tiny system behaviours. Follow the clues, experiment, and the archive will remember.'}</p><div className="hunt-hints">{[
+['BRAND SIGNAL','LYKA ko teen baar visit karo.'],
+['DEEP SCROLL','Kisi room ko seriously scroll karo.'],
+['GHEE RESERVE','Ghee Catcher se ek reserve catch karo.'],
+['MATHS VECTOR','Maths Lab mein enter karo.'],
+['ORBIT CHECK','Orbit ko thoda time do.'],
+['SEARCH TRACE','Global Search mein secret word “LYKA” type karo.'],
+['COMMAND TRACE','Command palette mein field-032 enter karo.'],
+['AI SIGNAL','ANIK.EXE ko activate karo.'],
+['INDEX TRACE','Photos/Archive signal discover karo.'],
+['FIELD PHRASE','Final clue unlock hone ke baad field phrase follow karo.']
+].map(([name,clue],i)=><div key={name} className={hunt.includes(i)?'found':''}><b>{String(i+1).padStart(2,'0')}</b><span>{hunt.includes(i)?'✓ '+name:name+' — '+clue}</span></div>)}</div></div>}
       {(() => {
         const secretSpots = [
           {route:'/hq',index:0,left:'12%',top:'29%',kind:'easy'},
@@ -246,8 +279,13 @@ export function Shell({ children }) {
           {route:'/archive',index:8,left:'96%',top:'91%',kind:'hard'},
           {route:'/hq',index:9,left:'50.5%',top:'11%',kind:'genius'}
         ];
-        const spot=secretSpots.find(x=>x.route===path && !hunt.includes(x.index));
-        return spot ? <button className={'hunt-hotspot '+spot.kind} style={{left:spot.left,top:spot.top}} onClick={()=>revealSecret(spot.index)} aria-label={'Hidden field artifact '+(spot.index+1)}><span className="hunt-artifact-core"/><i className="hunt-artifact-ring"/><b>FIELD ARTIFACT {String(spot.index+1).padStart(2,'0')}</b></button> : null;
+        const routeSignals = {'/maths-sir':3,'/mission':4,'/photos':8};
+        const routeSignal = routeSignals[path];
+        if (routeSignal !== undefined && !hunt.includes(routeSignal)) {
+          window.setTimeout(() => revealSecret(routeSignal), path === '/mission' ? 1800 : 1200);
+        }
+        const spot=null;
+        return null;
       })()}
       {huntCelebration && <div className={'hunt-celebration '+(huntCelebration.final?'final':'')} aria-live="polite">
         <div className="celebration-burst">{Array.from({length:42},(_,i)=><i key={i} style={{'--a':(i*8.57)+'deg','--d':(70+(i%9)*12)+'px','--r':(i%2?'2px':'4px'),'--delay':(i%7)*18+'ms'}}/> )}</div>
@@ -257,16 +295,19 @@ export function Shell({ children }) {
       {welcomeOpen && !six && (
         <div className={'welcome-overlay '+(welcomeLeaving?'leaving':'')} aria-label="LYKA welcome">
           <div className="welcome-card">
+            <div className="welcome-topline"><span>LYKA / FIELD SYSTEM</span><b>032</b></div>
+            <div className="welcome-ambient" aria-hidden="true"><i/><i/><i/></div>
             <div className="welcome-mark"><img src="/lyka-mark.svg" alt="LYKA" /></div>
-            <span className="welcome-kicker">LYKA / FIELD SYSTEM</span>
+            <span className="welcome-kicker">PRIVATE ARCHIVE · FIELD SYSTEM ONLINE</span>
             <h1>Kya aap Anik ki<br/><em>cool duniya mein jaane ke liye ready hain?</em></h1>
             <p>The archive is live. Step inside.</p>
-            <button className="welcome-enter" onClick={enterLyka}>ENTER LYKA <b>↗</b></button>
+            <button className="welcome-enter" onClick={enterLyka}><span>ENTER LYKA</span><b>↗</b></button>
+            <div className="welcome-meta"><span>PRIVATE / 2026</span><span>FIELD SYSTEM 032</span><span>SECURE ENTRY</span></div>
           </div>
         </div>
       )}
       {commandOpen && !six && <div className="command-overlay" onClick={()=>setCommandOpen(false)}><div className="command-box" onClick={e=>e.stopPropagation()}><div className="command-top"><span>LYKA / COMMAND PALETTE</span><kbd>ESC</kbd></div><input autoFocus value={command} onChange={e=>{setCommand(e.target.value);runCommand(e.target.value)}} onKeyDown={e=>{if(e.key==='Enter')runCommand(command)}} placeholder="Jump to a room…  /" /><small>HQ · Roast · Maths · Orbit · Archive · AI · Live · Photos</small></div></div>}
-      {!six && <AnikAIWidget route={path} ghee={ghee} cool={cool} />}
+      {!six && <div onClick={()=>revealSecret(7)}><AnikAIWidget route={path} ghee={ghee} cool={cool} /></div>}
       <GlobalFX />
       <Danger />
 
