@@ -848,3 +848,33 @@ button,.button,a{transition:transform .2s ease,box-shadow .2s ease,background .2
 .hunt-next{margin-top:11px;padding:13px 14px;border-radius:15px;background:#292d2f;color:#fff;box-shadow:0 14px 34px rgba(20,22,23,.16)}
 .hunt-next span{display:block;font:6px ui-monospace;letter-spacing:.2em;color:#aeb3ae}.hunt-next b{display:block;margin-top:4px;font:800 10px ui-monospace;letter-spacing:.03em}.hunt-next small{display:block;margin-top:5px;color:#a7ada8;font-size:8px}
 @media(max-width:800px){.welcome-card{padding:70px 25px 65px!important;min-height:calc(100vh - 24px)!important}.welcome-layout{grid-template-columns:1fr;min-height:0;text-align:center}.welcome-copy{padding:0;max-width:none}.welcome-card h1{font-size:clamp(44px,12vw,65px)!important}.welcome-hindi{font-size:13px!important}.welcome-sub{margin-left:auto!important;margin-right:auto!important}.welcome-hero-mark{width:190px;height:190px;order:-1}.welcome-hero-mark .welcome-mark{width:72px!important;height:72px!important;border-radius:20px!important}.welcome-hero-mark>span{bottom:22px}.hunt-map{grid-template-columns:1fr;max-height:420px}}
+
+/* v35 — interaction polish + route motion */
+html{scroll-behavior:smooth}
+body{overflow-x:hidden}
+.app-shell{min-height:100vh;position:relative}
+main{position:relative;z-index:1;animation:pageReveal .62s cubic-bezier(.16,1,.3,1) both}
+@keyframes pageReveal{from{opacity:0;transform:translateY(10px);filter:blur(2px)}to{opacity:1;transform:none;filter:none}}
+.nav-shell{transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s,border-color .35s,background .35s!important}
+.nav-shell:hover{box-shadow:0 18px 55px rgba(24,26,27,.12),inset 0 1px rgba(255,255,255,.95)!important;border-color:rgba(255,255,255,.98)!important}
+.brand-icon{transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s!important}.brand:hover .brand-icon{transform:rotate(-5deg) scale(1.06);box-shadow:0 12px 28px rgba(20,22,23,.18)!important}.brand-copy b{transition:letter-spacing .3s}.brand:hover .brand-copy b{letter-spacing:.02em}
+.global-search-trigger,.hunt-pill,.ghee-pill,.dial-trigger{transition:transform .25s cubic-bezier(.16,1,.3,1),box-shadow .25s,background .25s!important}.global-search-trigger:hover,.hunt-pill:hover,.ghee-pill:hover{transform:translateY(-2px)}
+.dial-trigger:active{transform:scale(.94)}
+.dial-overlay{animation:dialOverlayIn .38s cubic-bezier(.16,1,.3,1)}
+.dial-stage{animation:dialStageIn .55s cubic-bezier(.16,1,.3,1)}
+.dial-stage:after{content:'';position:absolute;inset:-25%;background:conic-gradient(from 90deg,transparent 0 68%,rgba(255,255,255,.28) 72%,transparent 77%);animation:dialSweep 5s linear infinite;pointer-events:none}
+.dial-core{animation:coreFloat 5s ease-in-out infinite}
+.dial-item{animation:dialItemIn .55s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--index,0) * 35ms)}
+.dial-item:nth-of-type(4){--index:1}.dial-item:nth-of-type(5){--index:2}.dial-item:nth-of-type(6){--index:3}.dial-item:nth-of-type(7){--index:4}.dial-item:nth-of-type(8){--index:5}.dial-item:nth-of-type(9){--index:6}.dial-item:nth-of-type(10){--index:7}.dial-item:nth-of-type(11){--index:8}.dial-item:nth-of-type(12){--index:9}.dial-item:nth-of-type(13){--index:10}.dial-item:nth-of-type(14){--index:11}.dial-item:nth-of-type(15){--index:12}
+@keyframes dialOverlayIn{from{opacity:0;backdrop-filter:blur(0)}to{opacity:1;backdrop-filter:blur(24px)}}
+@keyframes dialStageIn{from{opacity:0;transform:scale(.88) translateY(22px) rotate(-2deg)}to{opacity:1;transform:none}}
+@keyframes dialSweep{to{transform:rotate(360deg)}}@keyframes coreFloat{50%{transform:translateY(-5px) scale(1.015)}}@keyframes dialItemIn{from{opacity:0;transform:rotate(var(--angle)) translateY(calc((var(--radius) * -1) - 18px)) rotate(calc(var(--angle) * -1)) scale(.86)}to{opacity:1}}
+.route-transition{position:fixed;inset:0;z-index:600;display:grid;place-items:center;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.98),rgba(218,221,218,.96) 48%,rgba(183,188,184,.98));clip-path:inset(0 0 100% 0);overflow:hidden}
+.route-transition.on{animation:routeFlash .62s cubic-bezier(.76,0,.24,1) forwards}
+.transition-grid{position:absolute;inset:0;background:linear-gradient(rgba(23,24,25,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(23,24,25,.05) 1px,transparent 1px);background-size:44px 44px;transform:perspective(500px) rotateX(55deg) scale(1.5);opacity:.3}
+.transition-word{position:relative;font:900 clamp(38px,8vw,110px)/.8 ui-monospace;letter-spacing:-.08em;color:#202426;text-transform:uppercase;transform:scale(.78);opacity:0}.route-transition.on .transition-word{animation:routeWord .55s cubic-bezier(.16,1,.3,1) forwards}.transition-rule{position:absolute;width:min(560px,55vw);height:1px;background:#777d78;transform:scaleX(0)}.route-transition.on .transition-rule{animation:routeRule .45s .05s ease forwards}.route-transition small{position:absolute;bottom:34px;opacity:0!important;transform:translateY(7px);color:#6f7571!important}.route-transition.on small{animation:routeMeta .35s .16s ease forwards!important}
+@keyframes routeFlash{0%{opacity:0;clip-path:inset(100% 0 0 0)}12%{opacity:1}58%{opacity:1;clip-path:inset(0)}100%{opacity:0;clip-path:inset(0 0 100% 0)}}
+@keyframes routeWord{to{opacity:1;transform:scale(1)}}@keyframes routeRule{to{transform:scaleX(1)}}@keyframes routeMeta{to{opacity:1!important;transform:none}}
+.welcome-overlay,.hunt-panel,.lyka-search-overlay,.command-overlay,.dial-overlay{isolation:isolate}
+.welcome-overlay .welcome-card{animation:welcomeCard .9s cubic-bezier(.16,1,.3,1)}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
