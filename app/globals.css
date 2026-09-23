@@ -938,3 +938,61 @@ body:after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;op
 @keyframes messageIn{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
 .ai-input input:focus{box-shadow:0 0 0 4px rgba(196,111,79,.1)!important;border-color:rgba(196,111,79,.45)!important}
 @media(max-width:700px){.page{width:min(100% - 24px,1240px);padding:88px 0 80px}.hq-command-hero{min-height:760px!important}.hq-hero-copy h1{font-size:64px!important}.ai-hero{padding:28px!important}.ai-hero h1{font-size:70px!important}}
+
+/* v38 — premium dial + ten-site polish upgrades */
+.premium-topbar{will-change:transform}
+.dial-trigger{overflow:hidden;isolation:isolate}
+.dial-trigger:before{content:'';position:absolute;inset:-20%;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 68%,rgba(110,123,119,.28) 75%,transparent 83%);animation:triggerSweep 4.5s linear infinite;z-index:0}
+.dial-trigger-ring{z-index:1;animation:triggerRing 12s linear infinite}
+.dial-trigger:hover{transform:translateY(-3px) rotate(18deg) scale(1.04)!important}
+.dial-trigger:active{transform:scale(.95)!important}
+@keyframes triggerSweep{to{transform:rotate(360deg)}}@keyframes triggerRing{to{transform:rotate(-360deg)}}
+.dial-overlay{animation:dialIn .45s cubic-bezier(.16,1,.3,1)!important}
+.dial-stage{animation:dialStagePremium .65s cubic-bezier(.16,1,.3,1);isolation:isolate}
+.dial-stage:after{content:'';position:absolute;inset:8%;border-radius:50%;border:1px solid rgba(96,111,105,.08);box-shadow:0 0 100px rgba(106,120,114,.08);pointer-events:none;animation:dialBreath 4s ease-in-out infinite}
+.dial-orbit{animation:dialSpin 22s linear infinite!important;box-shadow:0 0 40px rgba(92,108,102,.06)}
+.dial-orbit-b{animation:dialSpinReverse 34s linear infinite!important}
+.dial-core{animation:coreFloat 5s ease-in-out infinite,corePulse 3.5s ease-in-out infinite}
+.dial-core:before{content:'';position:absolute;inset:-12px;border-radius:50%;border:1px solid rgba(104,122,114,.18);animation:coreRing 8s linear infinite}
+.dial-item{will-change:transform;transition:transform .5s cubic-bezier(.16,1,.3,1),background .3s,box-shadow .3s,border-color .3s!important}
+.dial-item:hover{transform:rotate(var(--angle)) translateY(calc((var(--radius) + 11px) * -1)) rotate(calc(var(--angle) * -1)) scale(1.045)!important}
+.dial-item:after{content:'';position:absolute;left:50%;bottom:-17px;width:1px;height:15px;background:linear-gradient(#77817d,transparent);opacity:.22}
+.dial-six{transition:transform .3s cubic-bezier(.16,1,.3,1),box-shadow .3s!important}
+.dial-six:hover{transform:translateY(-5px) scale(1.06)!important;box-shadow:0 24px 55px rgba(20,22,23,.28)!important}
+@keyframes dialStagePremium{from{opacity:0;transform:scale(.94) translateY(16px);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
+@keyframes dialBreath{50%{transform:scale(1.025);opacity:.55}}
+@keyframes coreFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes corePulse{50%{box-shadow:0 38px 90px rgba(20,22,23,.3),inset 0 1px rgba(255,255,255,.18),0 0 0 10px rgba(105,122,114,.035)}}
+@keyframes coreRing{to{transform:rotate(360deg)}}
+@keyframes dialSpinReverse{to{transform:rotate(-360deg)}}
+/* 1 — stronger page rhythm */
+main section{scroll-margin-top:110px}
+h1,h2,h3{font-feature-settings:"ss01" 1,"kern" 1}
+/* 2 — premium buttons */
+button,.button,a[role="button"]{ -webkit-tap-highlight-color:transparent}
+button:not(.dial-item):not(.dial-trigger):not(.dial-six){transition:transform .22s cubic-bezier(.16,1,.3,1),box-shadow .22s,border-color .22s,background .22s!important}
+/* 3 — editorial separators */
+hr{border:0!important;border-top:1px solid var(--line)!important}
+/* 4 — image treatment */
+img{image-rendering:auto}
+.photo-card img,.evidence-card img,.room-image img{transition:transform .7s cubic-bezier(.16,1,.3,1),filter .5s}
+.photo-card:hover img,.evidence-card:hover img,.room-image:hover img{transform:scale(1.035);filter:saturate(1.04) contrast(1.02)}
+/* 5 — premium focus accessibility */
+:focus-visible{outline:2px solid rgba(97,117,109,.55)!important;outline-offset:3px}
+/* 6 — sticky room headers */
+.room-header,.page-header{backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+/* 7 — stat numbers */
+.stat-value,.metric-value{font-variant-numeric:tabular-nums;letter-spacing:-.06em}
+/* 8 — route loading sheen */
+main:after{content:'';position:absolute;left:0;top:0;width:32%;height:1px;background:linear-gradient(90deg,transparent,rgba(104,122,114,.55),transparent);animation:pageSheen 1.2s .15s ease-out both;pointer-events:none}
+@keyframes pageSheen{from{transform:translateX(-120%);opacity:0}20%{opacity:1}to{transform:translateX(420%);opacity:0}}
+/* 9 — cleaner mobile interaction */
+@media(max-width:800px){
+ .dial-stage:after{inset:5%}.dial-orbit{animation-duration:30s!important}.dial-orbit-b{animation-duration:44s!important}
+ .dial-item:hover{transform:rotate(var(--angle)) translateY(calc((var(--radius) + 6px) * -1)) rotate(calc(var(--angle) * -1)) scale(1.02))!important}
+}
+/* 10 — reduced motion */
+@media(prefers-reduced-motion:reduce){
+ *,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}
+}
+.six-panel audio{display:none}
