@@ -163,7 +163,7 @@ export function Shell({ children }) {
       if (sixAudioRef.current) sixAudioRef.current.pause?.();
       const audio = new Audio('/six-warning.mp3');
       audio.loop = true;
-      audio.volume = 0.85;
+      audio.volume = 1.0;
       audio.preload = 'auto';
       const play = audio.play();
       if (play?.catch) play.catch(err => console.warn('SIX audio could not autoplay:', err));
