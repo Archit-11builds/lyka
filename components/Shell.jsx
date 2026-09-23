@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useSite } from './SiteProvider';
 import { TransitionLink } from './TransitionLink';
@@ -26,6 +26,7 @@ export function Shell({ children }) {
     const [step, setStep] = useState(0);
   const [q, setQ] = useState(() => sixQuestions[Math.floor(Math.random() * sixQuestions.length)]);
   const [msg, setMsg] = useState('');
+  const sixAudioRef = useRef(null);
   const [hunt, setHunt] = useState([]);
   const [brandTaps, setBrandTaps] = useState(0);
   const [hint, setHint] = useState(false);
