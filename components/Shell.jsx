@@ -171,7 +171,7 @@ export function Shell({ children }) {
               <TransitionLink key={href} href={href} className={path === href ? 'active' : ''}><span>{label}</span></TransitionLink>
             ))}
           </nav>
-          <div className="nav-right"><TransitionLink href="/ai" className="ai-nav-button">AI ↗</TransitionLink><button className="global-search-trigger" onClick={()=>setSearchOpen(true)} title="Search LYKA">⌕ <span>SEARCH</span></button><button className={"notice-bell "+(noticeOpen?"active":"")} onClick={()=>setNoticeOpen(v=>!v)} aria-label="LYKA update notifications" title="Update log">◔<i/></button>
+          <div className="nav-right"><TransitionLink href="/ai" className="ai-nav-button">AI ↗</TransitionLink><button className="global-search-trigger" onClick={()=>setSearchOpen(true)} title="Search LYKA">⌕ <span>SEARCH</span></button>
             <button className={'hunt-pill '+(hunt.length===10?'complete':'')} title="Secret Hunt progress · press H" onClick={()=>setHuntPanel(v=>!v)}><i/> HUNT <b>{hunt.length}/10</b></button><button className={"ghee-pill "+(gheeOpen?"open":"")} onClick={()=>setGheeOpen(v=>!v)} title="Open Ghee Catcher"><i />GHEE <b>{ghee}%</b><em>↗</em></button>
             <button className="index-button" onClick={() => setMenu((v) => !v)}><i /><span>{menu ? 'CLOSE' : 'INDEX'}</span></button>
           </div>
