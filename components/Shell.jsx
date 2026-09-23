@@ -8,11 +8,12 @@ import { GlobalFX } from './GlobalFX';
 import { Danger } from './Danger';
 import { sixQuestions } from '../lib/data';
 import { AnikAIWidget } from './AnikAIWidget';
+import { GheeCatcher } from './GheeCatcher';
 
 const links = [
   ['/hq', 'HQ'], ['/roast', 'Roast'], ['/maths-sir', 'Maths'], ['/mission', 'Orbit'],
 ];
-const allLinks = [...links, ['/ai', 'LYKA AI'], ['/chaos', 'Chaos'], ['/iq', 'Anik IQ'], ['/live', 'Live Feed'], ['/incidents', 'Incident Room'], ['/lmao', 'LMAO Lab'], ['/photos', 'Photos'], ['/about', 'About']];
+const allLinks = [...links, ['/ai', 'LYKA AI'], ['/chaos', 'Chaos'], ['/iq', 'Anik IQ'], ['/live', 'Live Feed'], ['/incidents', 'Incident Room'], ['/lmao', 'LMAO Lab'], ['/games', 'Mini Games'], ['/photos', 'Photos'], ['/about', 'About']];
 
 export function Shell({ children }) {
   const path = usePathname();
@@ -216,13 +217,7 @@ export function Shell({ children }) {
           </div>
         </header>
       )}
-      {gheeOpen && !six && <div className="ghee-catcher-popover" role="dialog" aria-label="Ghee Catcher">
-        <div className="ghee-catcher-head"><span>LYKA / RESOURCE LAB</span><button onClick={()=>setGheeOpen(false)}>×</button></div>
-        <div className="ghee-catcher-read"><div><small>GHEE RESERVE</small><strong>{ghee}<b>%</b></strong></div><span>+5 / CATCH</span></div>
-        <div className="ghee-catcher-meter"><i style={{width:ghee+'%'}}/><span>{ghee}%</span></div>
-        <button className="ghee-catch-button" onClick={()=>{if(ghee<100){refill(Math.min(100,ghee+5));setGheeCatches(v=>v+1);revealSecret(2)}}} disabled={ghee>=100}><span>🥣</span><b>{ghee>=100?'RESERVE FULL':'CATCH GHEE'}</b><em>{ghee>=100?'100%':'CATCH #'+(gheeCatches+1)}</em></button>
-        <div className="ghee-catcher-stats"><span>CATCHES <b>{gheeCatches}</b></span><span>COOL <b>{cool}</b></span><span>STATUS <b>{ghee>=80?'STABLE':'LOW'}</b></span></div>
-      </div>}
+      {gheeOpen && !six && <div className="ghee-catcher-popover" role="dialog" aria-label="Ghee Catcher"><GheeCatcher/></div>}
       {searchOpen && !six && <div className="lyka-search-overlay" onClick={()=>setSearchOpen(false)}><div className="lyka-search-panel" onClick={e=>e.stopPropagation()}><div className="search-head"><span>LYKA / GLOBAL INDEX</span><button onClick={()=>setSearchOpen(false)}>×</button></div><input autoFocus value={search} onChange={e=>{setSearch(e.target.value);if(e.target.value.trim().toLowerCase()==='lyka')revealSecret(5)}} placeholder="Search rooms, systems, routes…"/><div className="search-results">{allLinks.filter(([href,label])=>(label+' '+href).toLowerCase().includes(search.toLowerCase())).map(([href,label],i)=><TransitionLink key={href} href={href} onClick={()=>setSearchOpen(false)}><b>{String(i+1).padStart(2,'0')}</b><span>{label}</span><em>{href}</em></TransitionLink>)}{!allLinks.some(([href,label])=>(label+' '+href).toLowerCase().includes(search.toLowerCase()))&&<p>NO MATCH / TRY ANOTHER SIGNAL.</p>}</div><small className="search-foot">ENTER A ROOM · ESC/CLOSE TO EXIT</small></div></div>}
 
       {menu && !six && (
@@ -259,7 +254,7 @@ export function Shell({ children }) {
         </div>
       )}
 
-      <main>{children}</main>
+      <main>{children}</main>{!six && <div className="home-six-launcher">{sixBtn}</div>}
       {huntPanel && !six && <div className="hunt-panel"><div><span className="eyebrow">LYKA / SECRET HUNT</span><button onClick={()=>setHuntPanel(false)}>×</button></div><h3>{hunt.length}/10 <em>found.</em></h3><div className="hunt-progress"><i style={{width:(hunt.length*10)+'%'}}/><span>{hunt.length*10}%</span></div><p>{hunt.length===10?'Every field task is complete. The final challenge is unlocked.':'This is no logo hunt. LYKA hides actions, signals and tiny system behaviours. Follow the clues, experiment, and the archive will remember.'}</p><div className="hunt-map">
 {[
 ['BRAND SIGNAL','01','Warm-up','LYKA ko teen baar visit karo.'],
