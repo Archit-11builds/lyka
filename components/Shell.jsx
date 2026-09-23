@@ -329,7 +329,7 @@ export function Shell({ children }) {
             ))}
           </div>
           <div className="six-panel">
-            <button className="six-safe-exit" onClick={() => { stopSixAudio(); setSix(false); setMsg(''); }}>EXIT SIX</button>
+            <button className="six-safe-exit" onPointerDown={(e)=>{e.currentTarget.setPointerCapture?.(e.pointerId);e.currentTarget.dataset.hold='1';e.currentTarget._hold=window.setTimeout(()=>{delete e.currentTarget.dataset.hold;stopSixAudio();setSix(false);setMsg('');},3000)}} onPointerUp={(e)=>{window.clearTimeout(e.currentTarget._hold);delete e.currentTarget.dataset.hold}} onPointerLeave={(e)=>{window.clearTimeout(e.currentTarget._hold);delete e.currentTarget.dataset.hold}} onKeyDown={(e)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.currentTarget._hold=window.setTimeout(()=>{stopSixAudio();setSix(false);setMsg('');},3000)}}} onKeyUp={(e)=>window.clearTimeout(e.currentTarget._hold)} title="Hold for 3 seconds to exit">HOLD 3S TO EXIT</button>
             <div className="six-top"><span>LYKA / SIX PROTOCOL</span><b>STREAK {step}/5</b></div>
             <div className="six-status"><i/> LOCKDOWN ACTIVE <em>◉ AUDIO LOOP</em></div>
             <div className="six-badge">VI</div>
