@@ -20,6 +20,7 @@ export function Shell({ children }) {
   const [menu, setMenu] = useState(false);
   const [gheeOpen, setGheeOpen] = useState(false);
   const [gheeCatches, setGheeCatches] = useState(0);
+  const [noticeOpen, setNoticeOpen] = useState(false);
     const [step, setStep] = useState(0);
   const [q, setQ] = useState(() => sixQuestions[Math.floor(Math.random() * sixQuestions.length)]);
   const [msg, setMsg] = useState('');
@@ -34,6 +35,7 @@ export function Shell({ children }) {
     try { setHunt(JSON.parse(localStorage.getItem('lyka-hunt') || '[]')); } catch {}
     try { if (localStorage.getItem('lyka-v32-seen') !== '1') setUpdateOpen(true); } catch { setUpdateOpen(true); }
     document.body.classList.toggle('locked', six);
+    if (!six) { const t = window.setTimeout(() => setUpdateOpen(false), 9000); return () => { document.body.classList.remove('locked'); window.clearTimeout(t); }; }
     return () => document.body.classList.remove('locked');
   }, [six]);
 
@@ -171,13 +173,14 @@ export function Shell({ children }) {
               <TransitionLink key={href} href={href} className={path === href ? 'active' : ''}><span>{label}</span></TransitionLink>
             ))}
           </nav>
-          <div className="nav-right"><TransitionLink href="/ai" className="ai-nav-button">AI ↗</TransitionLink><button className="global-search-trigger" onClick={()=>setSearchOpen(true)} title="Search LYKA">⌕ <span>SEARCH</span></button>
+          <div className="nav-right"><TransitionLink href="/ai" className="ai-nav-button">AI ↗</TransitionLink><button className="global-search-trigger" onClick={()=>setSearchOpen(true)} title="Search LYKA">⌕ <span>SEARCH</span></button><button className={"notice-bell "+(noticeOpen?"active":"")} onClick={()=>setNoticeOpen(v=>!v)} aria-label="LYKA update notifications" title="Update log">◔<i/></button>
             <button className={'hunt-pill '+(hunt.length===10?'complete':'')} title="Secret Hunt progress · press H" onClick={()=>setHuntPanel(v=>!v)}><i/> HUNT <b>{hunt.length}/10</b></button><button className={"ghee-pill "+(gheeOpen?"open":"")} onClick={()=>setGheeOpen(v=>!v)} title="Open Ghee Catcher"><i />GHEE <b>{ghee}%</b><em>↗</em></button>
             <button className="index-button" onClick={() => setMenu((v) => !v)}><i /><span>{menu ? 'CLOSE' : 'INDEX'}</span></button>
           </div>
         </header>
       )}
 
+      {noticeOpen && !six && <div className="notice-panel"><div className="notice-panel-head"><div><span>LYKA / SIGNAL LOG</span><b>RELEASE 032</b></div><button onClick={()=>setNoticeOpen(false)}>×</button></div><div className="notice-item"><b>15:00</b><div><strong>PLATINUM INTERFACE</strong><small>Navigation, glass surfaces and system palette refined.</small></div></div><div className="notice-item"><b>14:58</b><div><strong>ORBIT / FLIGHT PROFILES</strong><small>SAFE, BALANCED and FAST profiles + mission grading.</small></div></div><div className="notice-item"><b>14:54</b><div><strong>ANIK.EXE</strong><small>Local commands, status readout and AI fallback.</small></div></div><div className="notice-item"><b>14:49</b><div><strong>GHEE CATCHER</strong><small>Interactive reserve controls and resource telemetry.</small></div></div><div className="notice-item"><b>14:42</b><div><strong>FIELD INDEX</strong><small>Primary rooms stay visible; secondary routes moved into INDEX.</small></div></div><div className="notice-panel-foot">LOCAL CHANGELOG / THIS BROWSER</div></div>}
       {gheeOpen && !six && <div className="ghee-catcher-popover" role="dialog" aria-label="Ghee Catcher">
         <div className="ghee-catcher-head"><span>LYKA / RESOURCE LAB</span><button onClick={()=>setGheeOpen(false)}>×</button></div>
         <div className="ghee-catcher-read"><div><small>GHEE RESERVE</small><strong>{ghee}<b>%</b></strong></div><span>+5 / CATCH</span></div>
