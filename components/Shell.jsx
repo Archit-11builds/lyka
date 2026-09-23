@@ -28,7 +28,7 @@ export function Shell({ children }) {
   const [hint, setHint] = useState(false);
   const [huntPanel, setHuntPanel] = useState(false);
   const [huntToast, setHuntToast] = useState('');
-  const [huntCelebration, setHuntCelebration] = useState(null); const [searchOpen,setSearchOpen]=useState(false); const [search,setSearch]=useState(''); const [endgame,setEndgame]=useState(false);
+  const [huntCelebration, setHuntCelebration] = useState(null); const [searchOpen,setSearchOpen]=useState(false); const [search,setSearch]=useState(''); const [endgame,setEndgame]=useState(false); const [updateStage,setUpdateStage]=useState(1);
 
   useEffect(() => {
     try { setHunt(JSON.parse(localStorage.getItem('lyka-hunt') || '[]')); } catch {}
@@ -122,6 +122,7 @@ export function Shell({ children }) {
   useEffect(()=>{ if(hunt.length===10){setEndgame(true)} },[hunt.length]);
 
   const closeUpdate = () => {
+    if (updateStage === 1) { setUpdateStage(2); return; }
     setUpdateOpen(false);
     try { localStorage.setItem('lyka-update-seen', '1'); } catch {}
   };
@@ -252,7 +253,34 @@ export function Shell({ children }) {
         <div className="celebration-card"><span>✦ SECRET {String(huntCelebration.index+1).padStart(2,'0')} FOUND ✦</span><b>{huntCelebration.final?'HUNT COMPLETE':'NICE FIND.'}</b><small>{huntCelebration.final?'10/10 — challenge unlocked.':'Keep going. The difficulty just changed.'}</small></div>
       </div>}
       {huntToast && <div className="hunt-toast">{huntToast}</div>}{endgame&&!six&&<div className="hunt-endgame"><div className="endgame-card"><span>LYKA / FINAL FIELD FILE</span><b>10 / 10</b><h2>YOU FOUND<br/><em>THE WHOLE THING.</em></h2><p>The archive is complete. The challenge reward is unlocked inside the site.</p><div><button className="button hot" onClick={()=>setEndgame(false)}>ENTER THE ARCHIVE ↗</button><button onClick={()=>setEndgame(false)}>CLOSE</button></div></div></div>}
-      {updateOpen && !six && <div className="update-overlay"><div className="update-card"><div className="update-signal"><i/>SYSTEM UPDATE <b>● LIVE</b></div><div className="notification-meta"><span>LYKA / FIELD SYSTEM</span><span>22 SEP 2026 · 032</span></div><h2>New features.<br/><em>Hidden in plain sight.</em></h2><p><b>10 hidden secrets</b> are now scattered across LYKA. Explore the rooms, inspect the interface and complete the hunt to unlock the in-site <b>₹100 challenge reward</b>.</p><div className="update-grid"><span>01 / Explore normally first.</span><span>02 / Inspect unusually polished details.</span><span>03 / Hints are available if you get stuck.</span><span>04 / Progress saves in this browser.</span><span>05 / Secret 09 is harder.</span><span>06 / Secret 10 is the final challenge.</span><button className="button hot" onClick={closeUpdate}>CONTINUE TO LYKA ↗</button></div><button className="update-hint" onClick={()=>setHint(v=>!v)}>{hint?'Hint: inspect the interface, not just the content.':'NEED A STARTING HINT?'}</button>{hint&&<small className="update-hint-text">Hint: obvious buttons ko chhod. Jahan UI thoda unnecessarily perfect lag raha hai, wahan dekh.</small>}</div></div>}
+      {updateOpen && !six && <div className="update-overlay premium-release-overlay"><div className="update-card premium-release-card">
+        {updateStage===1 ? <>
+          <div className="release-topline"><span>LYKA / FIELD SYSTEM</span><b>VERSION 32.0</b></div>
+          <div className="release-signal"><i/> FIELD SYSTEM UPDATED <b>● ONLINE</b></div>
+          <div className="release-index">032 <span>NEW BUILD</span></div>
+          <h2>The archive<br/><em>just got deeper.</em></h2>
+          <p className="release-lede">A cleaner interface, a tighter navigation system and a new layer of things to discover. Welcome back to LYKA.</p>
+          <div className="release-meta"><span>BUILD / 23 SEP 2026</span><span>PRIVATE FIELD RELEASE</span></div>
+          <button className="release-primary" onClick={closeUpdate}>VIEW VERSION NOTES <b>↗</b></button>
+        </> : <>
+          <div className="release-topline"><span>LYKA / VERSION NOTES</span><b>032 / CHANGELOG</b></div>
+          <div className="release-signal"><i/> NEW RELEASE <b>10+ UPDATES</b></div>
+          <h2>What changed.<br/><em>Everything useful.</em></h2>
+          <div className="release-grid">
+            <span><b>01</b><strong>Cleaner top bar</strong><small>Primary rooms only. Everything else lives in INDEX.</small></span>
+            <span><b>02</b><strong>Ghee Catcher</strong><small>A polished resource interface with live reserve controls.</small></span>
+            <span><b>03</b><strong>ANIK.EXE</strong><small>Quick LYKA commands plus full AI chat when connected.</small></span>
+            <span><b>04</b><strong>Premium notifications</strong><small>New release intro plus a proper version changelog.</small></span>
+            <span><b>05</b><strong>Secret Hunt</strong><small>10 hidden artifacts, saved progress and endgame reward.</small></span>
+            <span><b>06</b><strong>Global Search</strong><small>Jump across rooms without opening the archive map.</small></span>
+            <span><b>07</b><strong>Mission Log</strong><small>Orbit runs now keep a readable field record.</small></span>
+            <span><b>08</b><strong>Live Feed</strong><small>Reactive telemetry now feels like an actual stream.</small></span>
+            <span><b>09</b><strong>Evidence Zoom</strong><small>HQ visual records can be inspected properly.</small></span>
+            <span><b>10</b><strong>Premium polish pass</strong><small>Glass, spacing, motion and editorial details across LYKA.</small></span>
+          </div>
+          <div className="release-footer"><span>NO ACCOUNT / LOCAL PROGRESS</span><button className="release-primary" onClick={closeUpdate}>ENTER LYKA ↗</button></div>
+        </>}
+      </div></div>
       {!six && <AnikAIWidget route={path} ghee={ghee} cool={cool} />}
       <GlobalFX />
       <Danger />
