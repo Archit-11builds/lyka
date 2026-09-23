@@ -94,7 +94,7 @@ export async function POST(request) {
     const data = await response.json();
     if (!response.ok) {
       console.error('LYKA AI provider error:', data);
-      return Response.json({ error: 'LYKA AI hit a provider error. Check the API key, model, and quota.' }, { status: 502 });
+      return Response.json({ error: data?.error?.message || ('Gemini provider error (HTTP '+response.status+'). Check GEMINI_API_KEY / model / quota.') }, { status: 502 });
     }
 
     const text = data?.candidates?.[0]?.content?.parts?.map((p) => p.text || '').join('').trim();
