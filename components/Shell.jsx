@@ -7,6 +7,7 @@ import { TransitionLink } from './TransitionLink';
 import { GlobalFX } from './GlobalFX';
 import { Danger } from './Danger';
 import { sixQuestions } from '../lib/data';
+import { AnikAIWidget } from './AnikAIWidget';
 
 const links = [
   ['/hq', 'HQ'], ['/roast', 'Roast'], ['/maths-sir', 'Maths'],
@@ -16,7 +17,7 @@ const allLinks = [...links, ['/ai', 'LYKA AI'], ['/chaos', 'Chaos'], ['/iq', 'An
 
 export function Shell({ children }) {
   const path = usePathname();
-  const { ghee, six, setSix } = useSite();
+  const { ghee, cool, six, setSix } = useSite();
   const [menu, setMenu] = useState(false);
     const [step, setStep] = useState(0);
   const [q, setQ] = useState(() => sixQuestions[Math.floor(Math.random() * sixQuestions.length)]);
@@ -246,6 +247,7 @@ export function Shell({ children }) {
       </div>}
       {huntToast && <div className="hunt-toast">{huntToast}</div>}{endgame&&!six&&<div className="hunt-endgame"><div className="endgame-card"><span>LYKA / FINAL FIELD FILE</span><b>10 / 10</b><h2>YOU FOUND<br/><em>THE WHOLE THING.</em></h2><p>The archive is complete. The challenge reward is unlocked inside the site.</p><div><button className="button hot" onClick={()=>setEndgame(false)}>ENTER THE ARCHIVE ↗</button><button onClick={()=>setEndgame(false)}>CLOSE</button></div></div></div>}
       {updateOpen && !six && <div className="update-overlay"><div className="update-card"><div className="update-signal"><i/>SYSTEM UPDATE <b>● LIVE</b></div><div className="notification-meta"><span>LYKA / FIELD SYSTEM</span><span>22 SEP 2026 · 032</span></div><h2>New features.<br/><em>Hidden in plain sight.</em></h2><p><b>10 hidden secrets</b> are now scattered across LYKA. Explore the rooms, inspect the interface and complete the hunt to unlock the in-site <b>₹100 challenge reward</b>.</p><div className="update-grid"><span>01 / Explore normally first.</span><span>02 / Inspect unusually polished details.</span><span>03 / Hints are available if you get stuck.</span><span>04 / Progress saves in this browser.</span><span>05 / Secret 09 is harder.</span><span>06 / Secret 10 is the final challenge.</span><button className="button hot" onClick={closeUpdate}>CONTINUE TO LYKA ↗</button></div><button className="update-hint" onClick={()=>setHint(v=>!v)}>{hint?'Hint: inspect the interface, not just the content.':'NEED A STARTING HINT?'}</button>{hint&&<small className="update-hint-text">Hint: obvious buttons ko chhod. Jahan UI thoda unnecessarily perfect lag raha hai, wahan dekh.</small>}</div></div>}
+      {!six && <AnikAIWidget route={path} ghee={ghee} cool={cool} />}
       <GlobalFX />
       <Danger />
 
