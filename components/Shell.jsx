@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useSite } from './SiteProvider';
 import { TransitionLink } from './TransitionLink';
 import { GlobalFX } from './GlobalFX';
@@ -16,28 +16,26 @@ const allLinks = [...links, ['/ai', 'LYKA AI'], ['/chaos', 'Chaos'], ['/iq', 'An
 
 export function Shell({ children }) {
   const path = usePathname();
+  const router = useRouter();
   const { ghee, cool, six, setSix, refill } = useSite();
   const [menu, setMenu] = useState(false);
   const [gheeOpen, setGheeOpen] = useState(false);
   const [gheeCatches, setGheeCatches] = useState(0);
-  const [noticeOpen, setNoticeOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
   const [command, setCommand] = useState('');
     const [step, setStep] = useState(0);
   const [q, setQ] = useState(() => sixQuestions[Math.floor(Math.random() * sixQuestions.length)]);
   const [msg, setMsg] = useState('');
   const [hunt, setHunt] = useState([]);
-  const [updateOpen, setUpdateOpen] = useState(false);
   const [hint, setHint] = useState(false);
   const [huntPanel, setHuntPanel] = useState(false);
   const [huntToast, setHuntToast] = useState('');
-  const [huntCelebration, setHuntCelebration] = useState(null); const [searchOpen,setSearchOpen]=useState(false); const [search,setSearch]=useState(''); const [endgame,setEndgame]=useState(false); const [updateStage,setUpdateStage]=useState(1);
+  const [huntCelebration, setHuntCelebration] = useState(null); const [searchOpen,setSearchOpen]=useState(false); const [search,setSearch]=useState(''); const [endgame,setEndgame]=useState(false); const [welcomeOpen,setWelcomeOpen]=useState(true); const [welcomeLeaving,setWelcomeLeaving]=useState(false);
 
   useEffect(() => {
     try { setHunt(JSON.parse(localStorage.getItem('lyka-hunt') || '[]')); } catch {}
-    try { if (localStorage.getItem('lyka-v32-seen') !== '1') setUpdateOpen(true); } catch { setUpdateOpen(true); }
     document.body.classList.toggle('locked', six);
-    if (!six) { const t = window.setTimeout(() => setUpdateOpen(false), 9000); return () => { document.body.classList.remove('locked'); window.clearTimeout(t); }; }
+    if (!six) return () => document.body.classList.remove('locked');
     return () => document.body.classList.remove('locked');
   }, [six]);
 
@@ -127,11 +125,7 @@ export function Shell({ children }) {
 
   useEffect(() => { const onKey=e=>{ if(e.key==='/' && !['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)){e.preventDefault();setCommandOpen(true)} if(e.key==='Escape')setCommandOpen(false)}; window.addEventListener('keydown',onKey); return ()=>window.removeEventListener('keydown',onKey)}, []);
   const runCommand = value => { const map={hq:'/hq',roast:'/roast',maths:'/maths-sir',orbit:'/mission',vault:'/memes',archive:'/archive',lmao:'/lmao',live:'/live',incidents:'/incidents',photos:'/photos',about:'/about',ai:'/ai'}; const key=value.trim().toLowerCase().replace(/^\//,''); if(map[key]){setCommandOpen(false);router.push(map[key])} };
-  const closeUpdate = () => {
-    if (updateStage === 1) { setUpdateStage(2); return; }
-    setUpdateOpen(false);
-    try { localStorage.setItem('lyka-v32-seen', '1'); } catch {}
-  };
+  const enterLyka = () => { setWelcomeLeaving(true); window.setTimeout(() => setWelcomeOpen(false), 760); };
 
   const openSix = () => {
     playSixWarning();
@@ -184,7 +178,7 @@ export function Shell({ children }) {
         </header>
       )}
 
-      {noticeOpen && !six && <div className="notice-panel"><div className="notice-panel-head"><div><span>LYKA / SIGNAL LOG</span><b>RELEASE 032</b></div><button onClick={()=>setNoticeOpen(false)}>×</button></div><div className="notice-item"><b>15:00</b><div><strong>PLATINUM INTERFACE</strong><small>Navigation, glass surfaces and system palette refined.</small></div></div><div className="notice-item"><b>14:58</b><div><strong>ORBIT / FLIGHT PROFILES</strong><small>SAFE, BALANCED and FAST profiles + mission grading.</small></div></div><div className="notice-item"><b>14:54</b><div><strong>ANIK.EXE</strong><small>Local commands, status readout and AI fallback.</small></div></div><div className="notice-item"><b>14:49</b><div><strong>GHEE CATCHER</strong><small>Interactive reserve controls and resource telemetry.</small></div></div><div className="notice-item"><b>14:42</b><div><strong>FIELD INDEX</strong><small>Primary rooms stay visible; secondary routes moved into INDEX.</small></div></div><div className="notice-panel-foot">LOCAL CHANGELOG / THIS BROWSER</div></div>}
+
       {gheeOpen && !six && <div className="ghee-catcher-popover" role="dialog" aria-label="Ghee Catcher">
         <div className="ghee-catcher-head"><span>LYKA / RESOURCE LAB</span><button onClick={()=>setGheeOpen(false)}>×</button></div>
         <div className="ghee-catcher-read"><div><small>GHEE RESERVE</small><strong>{ghee}<b>%</b></strong></div><span>+5 / CATCH</span></div>
@@ -260,39 +254,14 @@ export function Shell({ children }) {
         <div className="celebration-card"><span>✦ SECRET {String(huntCelebration.index+1).padStart(2,'0')} FOUND ✦</span><b>{huntCelebration.final?'HUNT COMPLETE':'NICE FIND.'}</b><small>{huntCelebration.final?'10/10 — challenge unlocked.':'Keep going. The difficulty just changed.'}</small></div>
       </div>}
       {huntToast && <div className="hunt-toast">{huntToast}</div>}{endgame&&!six&&<div className="hunt-endgame"><div className="endgame-card"><span>LYKA / FINAL FIELD FILE</span><b>10 / 10</b><h2>YOU FOUND<br/><em>THE WHOLE THING.</em></h2><p>The archive is complete. The challenge reward is unlocked inside the site.</p><div><button className="button hot" onClick={()=>setEndgame(false)}>ENTER THE ARCHIVE ↗</button><button onClick={()=>setEndgame(false)}>CLOSE</button></div></div></div>}
-      {updateOpen && !six && (
-        <div className="update-overlay premium-release-overlay">
-          <div className="update-card premium-release-card">
-            {updateStage === 1 ? (
-              <div className="release-stage">
-                <div className="release-topline"><span>LYKA / FIELD SYSTEM</span><b>VERSION 32.0</b></div>
-                <div className="release-signal"><i /> FIELD SYSTEM UPDATED <b>● ONLINE</b></div>
-                <div className="release-index">032 <span>NEW BUILD</span></div>
-                <h2>The archive<br /><em>just got deeper.</em></h2>
-                <p className="release-lede">A cleaner interface, a tighter navigation system and a new layer of things to discover. Welcome back to LYKA.</p>
-                <div className="release-meta"><span>BUILD / 23 SEP 2026</span><span>PRIVATE FIELD RELEASE</span></div>
-                <button className="release-primary" onClick={closeUpdate}>VIEW VERSION NOTES <b>↗</b></button>
-              </div>
-            ) : (
-              <div className="release-stage">
-                <div className="release-topline"><span>LYKA / VERSION NOTES</span><b>032 / CHANGELOG</b></div>
-                <div className="release-signal"><i /> NEW RELEASE <b>10+ UPDATES</b></div>
-                <h2>What changed.<br /><em>Everything useful.</em></h2>
-                <div className="release-grid">
-                  <span><b>01</b><strong>Cleaner top bar</strong><small>Primary rooms only. Everything else lives in INDEX.</small></span>
-                  <span><b>02</b><strong>Ghee Catcher</strong><small>A polished resource interface with live reserve controls.</small></span>
-                  <span><b>03</b><strong>ANIK.EXE</strong><small>Quick LYKA commands plus full AI chat when connected.</small></span>
-                  <span><b>04</b><strong>Premium notifications</strong><small>New release intro plus a proper version changelog.</small></span>
-                  <span><b>05</b><strong>Secret Hunt</strong><small>10 hidden artifacts, saved progress and endgame reward.</small></span>
-                  <span><b>06</b><strong>Global Search</strong><small>Jump across rooms without opening the archive map.</small></span>
-                  <span><b>07</b><strong>Mission Log</strong><small>Orbit runs now keep a readable field record.</small></span>
-                  <span><b>08</b><strong>Live Feed</strong><small>Reactive telemetry now feels like an actual stream.</small></span>
-                  <span><b>09</b><strong>Evidence Zoom</strong><small>HQ visual records can be inspected properly.</small></span>
-                  <span><b>10</b><strong>Premium polish pass</strong><small>Glass, spacing, motion and editorial details across LYKA.</small></span>
-                </div>
-                <div className="release-footer"><span>NO ACCOUNT / LOCAL PROGRESS</span><button className="release-primary" onClick={closeUpdate}>ENTER LYKA ↗</button></div>
-              </div>
-            )}
+      {welcomeOpen && !six && (
+        <div className={'welcome-overlay '+(welcomeLeaving?'leaving':'')} aria-label="LYKA welcome">
+          <div className="welcome-card">
+            <div className="welcome-mark"><img src="/lyka-mark.svg" alt="LYKA" /></div>
+            <span className="welcome-kicker">LYKA / FIELD SYSTEM</span>
+            <h1>Kya aap Anik ki<br/><em>cool duniya mein jaane ke liye ready hain?</em></h1>
+            <p>The archive is live. Step inside.</p>
+            <button className="welcome-enter" onClick={enterLyka}>ENTER LYKA <b>↗</b></button>
           </div>
         </div>
       )}
