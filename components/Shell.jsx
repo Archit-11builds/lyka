@@ -32,7 +32,7 @@ export function Shell({ children }) {
 
   useEffect(() => {
     try { setHunt(JSON.parse(localStorage.getItem('lyka-hunt') || '[]')); } catch {}
-    try { if (localStorage.getItem('lyka-update-seen') !== '1') setUpdateOpen(true); } catch { setUpdateOpen(true); }
+    try { if (localStorage.getItem('lyka-v32-seen') !== '1') setUpdateOpen(true); } catch { setUpdateOpen(true); }
     document.body.classList.toggle('locked', six);
     return () => document.body.classList.remove('locked');
   }, [six]);
@@ -124,7 +124,7 @@ export function Shell({ children }) {
   const closeUpdate = () => {
     if (updateStage === 1) { setUpdateStage(2); return; }
     setUpdateOpen(false);
-    try { localStorage.setItem('lyka-update-seen', '1'); } catch {}
+    try { localStorage.setItem('lyka-v32-seen', '1'); } catch {}
   };
 
   const openSix = () => {
