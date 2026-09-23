@@ -2,14 +2,14 @@
 import {useEffect,useState} from 'react';
 import {useSite} from './SiteProvider';
 
-export function GheeCatcher(){
+export function GheeCatcher({onCatch}){
   const {ghee,cool,refill}=useSite();
   const [score,setScore]=useState(0),[streak,setStreak]=useState(0),[active,setActive]=useState(false),[pos,setPos]=useState({x:50,y:50}),[time,setTime]=useState(20);
   useEffect(()=>{if(!active)return;const id=setInterval(()=>setTime(t=>Math.max(0,t-1)),1000);return()=>clearInterval(id)},[active]);
   useEffect(()=>{if(active&&time===0){setActive(false);setStreak(0)}},[time,active]);
   useEffect(()=>{if(!active)return;const id=setInterval(()=>setPos({x:10+Math.random()*78,y:14+Math.random()*68}),900);return()=>clearInterval(id)},[active]);
   const start=()=>{setScore(0);setStreak(0);setTime(20);setPos({x:50,y:50});setActive(true)};
-  const catchIt=()=>{if(!active)return;setScore(s=>s+1);setStreak(s=>s+1);refill(Math.min(100,ghee+5));setPos({x:10+Math.random()*78,y:14+Math.random()*68})};
+  const catchIt=()=>{if(!active)return;setScore(s=>s+1);setStreak(s=>s+1);refill(Math.min(100,ghee+5));setPos({x:10+Math.random()*78,y:14+Math.random()*68});onCatch?.()};
   return <div className="ghee-game">
     <div className="ghee-game-head"><div><span>RESOURCE LAB / 01</span><b>GHEE CATCHER</b></div><button onClick={start}>{active?'RESTART':'PLAY'}</button></div>
     <div className="ghee-game-arena"><div className="ghee-game-grid"/>
