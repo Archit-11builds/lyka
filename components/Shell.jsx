@@ -235,22 +235,6 @@ export function Shell({ children }) {
         </div>
       )}
 
-      {false && !six && (
-        <div className="command-backdrop" onClick={() => setCmd(false)}>
-          <div className="command-panel" onClick={(e) => e.stopPropagation()}>
-            <div className="command-head"><span>LYKA COMMAND</span><kbd>ESC</kbd></div>
-            <div className="command-input"><span>SEARCH LYKA</span><kbd>/</kbd></div>
-            <div className="command-grid">
-              {allLinks.map(([href, label]) => (
-                <TransitionLink key={href} href={href} onClick={() => setCmd(false)}><span>{label}</span><b>↗</b></TransitionLink>
-              ))}
-              <button onClick={openSix}><span>Six Mode</span><b>⚡</b></button>
-            </div>
-            <div className="command-foot"><span>LYKA NAVIGATION SYSTEM</span><b>ESC TO CLOSE</b></div>
-          </div>
-        </div>
-      )}
-
       <main>{children}</main>
       {huntPanel && !six && <div className="hunt-panel"><div><span className="eyebrow">LYKA / SECRET HUNT</span><button onClick={()=>setHuntPanel(false)}>×</button></div><h3>{hunt.length}/10 <em>found.</em></h3><div className="hunt-progress"><i style={{width:(hunt.length*10)+'%'}}/><span>{hunt.length*10}%</span></div><p>{hunt.length===10?'Every field task is complete. The final challenge is unlocked.':'This is no logo hunt. LYKA hides actions, signals and tiny system behaviours. Follow the clues, experiment, and the archive will remember.'}</p><div className="hunt-map">
 {[
