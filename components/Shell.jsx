@@ -190,24 +190,21 @@ export function Shell({ children }) {
   return (
     <div className="app-shell">
       {!six && (
-        <header className="nav-shell">
-          <TransitionLink href="/hq" className="brand" aria-label="LYKA home" onClick={()=>{const n=brandTaps+1;setBrandTaps(n);if(n>=3)revealSecret(0)}}>
+        <header className="nav-shell premium-topbar">
+          <TransitionLink href="/hq" className="brand" aria-label="LYKA home">
             <span className="brand-icon"><img src="/lyka-mark.svg" alt="" /></span>
             <span className="brand-copy"><b>LYKA</b><small>FIELD SYSTEM / 032</small></span>
           </TransitionLink>
-          <nav className="main-nav" aria-label="LYKA primary navigation">
-            {links.map(([href, label]) => (
-              <TransitionLink key={href} href={href} className={path === href ? 'active' : ''}><span>{label}</span></TransitionLink>
-            ))}
-          </nav>
-          <div className="nav-right"><TransitionLink href="/ai" className="ai-nav-button">AI ↗</TransitionLink><button className="global-search-trigger" onClick={()=>setSearchOpen(true)} title="Search LYKA">⌕ <span>SEARCH</span></button>
-            <button className={'hunt-pill '+(hunt.length===10?'complete':'')} title="Secret Hunt progress · press H" onClick={()=>setHuntPanel(v=>!v)}><i/> HUNT <b>{hunt.length}/10</b></button><button className={"ghee-pill "+(gheeOpen?"open":"")} onClick={()=>setGheeOpen(v=>!v)} title="Open Ghee Catcher"><i />GHEE <b>{ghee}%</b><em>↗</em></button>
-            <button className="index-button" onClick={() => setMenu((v) => !v)}><i /><span>{menu ? 'CLOSE' : 'INDEX'}</span></button>
+          <div className="topbar-center"><span>PRIVATE ARCHIVE</span><i></i><b>{path === '/hq' ? 'HQ' : (allLinks.find(([href])=>href===path)?.[1] || 'FIELD')}</b></div>
+          <div className="nav-right">
+            <button className="global-search-trigger" onClick={()=>setSearchOpen(true)} title="Search LYKA">⌕ <span>SEARCH</span></button>
+            <button className={'hunt-pill '+(hunt.length===10?'complete':'')} title="Secret Hunt progress · press H" onClick={()=>setHuntPanel(v=>!v)}><i/> HUNT <b>{hunt.length}/10</b></button>
+            <button className={"ghee-pill "+(gheeOpen?"open":"")} onClick={()=>setGheeOpen(v=>!v)} title="Open Ghee Catcher"><i />GHEE <b>{ghee}%</b><em>↗</em></button>
+            <button className="dial-trigger" onClick={() => setMenu(v => !v)} aria-label="Open LYKA navigation" aria-expanded={menu}>
+              <span className="dial-trigger-ring"><i></i><i></i><i></i></span><b>INDEX</b>
+            </button>
           </div>
         </header>
-      )}
-
-
       {gheeOpen && !six && <div className="ghee-catcher-popover" role="dialog" aria-label="Ghee Catcher">
         <div className="ghee-catcher-head"><span>LYKA / RESOURCE LAB</span><button onClick={()=>setGheeOpen(false)}>×</button></div>
         <div className="ghee-catcher-read"><div><small>GHEE RESERVE</small><strong>{ghee}<b>%</b></strong></div><span>+5 / CATCH</span></div>
@@ -218,28 +215,21 @@ export function Shell({ children }) {
       {searchOpen && !six && <div className="lyka-search-overlay" onClick={()=>setSearchOpen(false)}><div className="lyka-search-panel" onClick={e=>e.stopPropagation()}><div className="search-head"><span>LYKA / GLOBAL INDEX</span><button onClick={()=>setSearchOpen(false)}>×</button></div><input autoFocus value={search} onChange={e=>{setSearch(e.target.value);if(e.target.value.trim().toLowerCase()==='lyka')revealSecret(5)}} placeholder="Search rooms, systems, routes…"/><div className="search-results">{allLinks.filter(([href,label])=>(label+' '+href).toLowerCase().includes(search.toLowerCase())).map(([href,label],i)=><TransitionLink key={href} href={href} onClick={()=>setSearchOpen(false)}><b>{String(i+1).padStart(2,'0')}</b><span>{label}</span><em>{href}</em></TransitionLink>)}{!allLinks.some(([href,label])=>(label+' '+href).toLowerCase().includes(search.toLowerCase()))&&<p>NO MATCH / TRY ANOTHER SIGNAL.</p>}</div><small className="search-foot">ENTER A ROOM · ESC/CLOSE TO EXIT</small></div></div>}
 
       {menu && !six && (
-        <div className="nav-overlay" onClick={() => setMenu(false)}>
-          <div className="nav-drawer premium-nav-panel" onClick={(e) => e.stopPropagation()}>
-            <div className="drawer-head">
-              <div><span>LYKA / FIELD INDEX</span><small>ALL SYSTEMS • 032</small></div>
-              <button onClick={() => setMenu(false)} aria-label="Close navigation">×</button>
-            </div>
-            <div className="drawer-hero">
-              <small>NAVIGATION</small>
-              <h2>Choose<br /><i>your route.</i></h2>
-              <p>The entire archive, arranged properly.</p>
-            </div>
-            <div className="drawer-links">
-              {allLinks.map(([href, label], index) => (
-                <TransitionLink key={href} href={href} onClick={() => setMenu(false)}>
-                  <span>{String(index + 1).padStart(2, '0')}</span><strong>{label}</strong><em>↗</em>
+        <div className="dial-overlay" onClick={() => setMenu(false)}>
+          <div className="dial-stage" onClick={e=>e.stopPropagation()}>
+            <div className="dial-topline"><span>LYKA / NAVIGATION DIAL</span><button onClick={()=>setMenu(false)}>ESC</button></div>
+            <div className="dial">
+              <div className="dial-orbit dial-orbit-a"></div><div className="dial-orbit dial-orbit-b"></div>
+              <div className="dial-core"><img src="/lyka-mark.svg" alt="LYKA"/><span>FIELD<br/>INDEX</span></div>
+              {allLinks.map(([href,label],index)=>{
+                const angle=(index/allLinks.length)*360-90;
+                return <TransitionLink key={href} href={href} onClick={()=>setMenu(false)} className={'dial-item '+(path===href?'active':'')} style={{'--angle':angle+'deg'}}>
+                  <span>{String(index+1).padStart(2,'0')}</span><b>{label}</b><i></i>
                 </TransitionLink>
-              ))}
+              })}
+              <button className="dial-six" onClick={openSix}><span>⚡</span><b>SIX</b></button>
             </div>
-            <button className="drawer-six" onClick={openSix}>
-              <span>09</span><div><strong>SIX MODE</strong><small>ENTER THE LOCKDOWN</small></div><em>↗</em>
-            </button>
-            <div className="drawer-foot"><span>PRIVATE ARCHIVE / 2026</span><span>ESC TO CLOSE</span></div>
+            <div className="dial-footer"><span>{allLinks.length} ROOMS</span><b>{allLinks.find(([href])=>href===path)?.[1] || 'FIELD'}</b><span>SELECT A SIGNAL</span></div>
           </div>
         </div>
       )}
