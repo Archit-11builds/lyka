@@ -1,0 +1,2 @@
+import MiniGames from '../../components/MiniGames';
+export default function GamesPage(){return <main className="page games-page"><div className="games-hero"><span className="eyebrow">LYKA / PLAY SYSTEM</span><h1>MINI<br/><em>GAMES.</em></h1><p>Five compact games. Smooth controls. No leaderboard nonsense — just beat your own run.</p></div><MiniGames/></main>}
