@@ -59,7 +59,9 @@ export async function POST(request) {
     const messages = Array.isArray(body?.messages) ? body.messages.slice(-20) : [];
     const visitorContext = body?.visitorContext || {};
 
-    const contents = messages.map((m) => ({
+    const cleaned = messages.filter((m) => m && (m.role === 'user' || m.role === 'assistant') && String(m.content || '').trim());
+    const safeMessages = cleaned[0]?.role === 'assistant' ? cleaned.slice(1) : cleaned;
+    const contents = safeMessages.map((m) => ({
       role: m.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: String(m.content || '').slice(0, 4000) }],
     }));
