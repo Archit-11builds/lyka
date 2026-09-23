@@ -58,19 +58,24 @@ export async function POST(request) {
     const body = await request.json();
     const messages = Array.isArray(body?.messages) ? body.messages.slice(-20) : [];
     const visitorContext = body?.visitorContext || {};
+    const contextNote = Object.keys(visitorContext).length
+      ? '\nCurrent LYKA visitor context (UI context only): ' + JSON.stringify(visitorContext).slice(0, 1500)
+      : '';
 
     const cleaned = messages.filter((m) => m && (m.role === 'user' || m.role === 'assistant') && String(m.content || '').trim());
     const safeMessages = cleaned[0]?.role === 'assistant' ? cleaned.slice(1) : cleaned;
-    const contents = safeMessages.map((m) => ({
+    const rawContents = safeMessages.map((m) => ({
       role: m.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: String(m.content || '').slice(0, 4000) }],
     }));
-
-    if (visitorContext && Object.keys(visitorContext).length) {
-      contents.unshift({
-        role: 'user',
-        parts: [{ text: 'Current LYKA visitor context (use only as UI context): ' + JSON.stringify(visitorContext).slice(0, 1500) }],
-      });
+    const contents = [];
+    for (const item of rawContents) {
+      const previous = contents[contents.length - 1];
+      if (previous?.role === item.role) {
+        previous.parts[0].text += '\n' + item.parts[0].text;
+      } else {
+        contents.push(item);
+      }
     }
 
     const response = await fetch(
@@ -79,7 +84,7 @@ export async function POST(request) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          systemInstruction: { parts: [{ text: LYKA_CONTEXT }] },
+          systemInstruction: { parts: [{ text: LYKA_CONTEXT + contextNote }] },
           contents: contents.length ? contents : [{ role: 'user', parts: [{ text: 'Introduce yourself as LYKA AI.' }] }],
           generationConfig: { temperature: 0.75, maxOutputTokens: 700 },
         }),
