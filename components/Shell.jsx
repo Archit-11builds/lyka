@@ -44,21 +44,16 @@ export function Shell({ children }) {
     const onScroll = () => {
       if (window.scrollY > Math.max(420, document.documentElement.scrollHeight * 0.58)) revealSecret(1);
     };
-    const onClick = (e) => {
-      const el = e.target.closest?.('[data-lyka-hunt="signal"]');
-      if (el) revealSecret(Number(el.dataset.huntIndex));
-    };
-    const onSecret = (e) => {
-      const index = Number(e.detail?.index);
-      if (Number.isInteger(index)) {
-        try { localStorage.setItem('lyka-hunt', JSON.stringify([...new Set([...hunt, index])])); } catch {}
-      }
-    };
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('click', onClick);
-    window.addEventListener('lyka:secret', onSecret);
-    return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('click', onClick); window.removeEventListener('lyka:secret', onSecret); };
+    return () => window.removeEventListener('scroll', onScroll);
   }, [hunt]);
+  useEffect(() => {
+    const routeSignals = {'/maths-sir':3,'/mission':4,'/photos':8};
+    const signal = routeSignals[path];
+    if (signal === undefined || hunt.includes(signal)) return;
+    const timer = window.setTimeout(() => revealSecret(signal), path === '/mission' ? 1800 : 1200);
+    return () => window.clearTimeout(timer);
+  }, [path, hunt]);
 
   useEffect(() => {
     const key = (e) => {
@@ -145,7 +140,19 @@ export function Shell({ children }) {
 
   useEffect(()=>{ if(hunt.length===10){setEndgame(true)} },[hunt.length]);
 
-  useEffect(() => { const onKey=e=>{ if(e.key==='/' && !['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)){e.preventDefault();setCommandOpen(true)} if(e.key==='Escape')setCommandOpen(false)}; window.addEventListener('keydown',onKey); return ()=>window.removeEventListener('keydown',onKey)}, []);
+  useEffect(() => {
+    let sequence = '';
+    const onKey = e => {
+      if (e.key === '/' && !['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) { e.preventDefault(); setCommandOpen(true); }
+      if (e.key === 'Escape') setCommandOpen(false);
+      if (!['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) {
+        sequence = (sequence + e.key.toLowerCase()).slice(-4);
+        if (sequence === 'cool') revealSecret(9);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [hunt]);
   const runCommand = value => { if(value.trim().toLowerCase()==='field-032'){revealSecret(6);setCommandOpen(false);setCommand('');return;} const map={hq:'/hq',roast:'/roast',maths:'/maths-sir',orbit:'/mission',vault:'/memes',archive:'/archive',lmao:'/lmao',live:'/live',incidents:'/incidents',photos:'/photos',about:'/about',ai:'/ai'}; const key=value.trim().toLowerCase().replace(/^\//,''); if(map[key]){setCommandOpen(false);router.push(map[key])} };
   const enterLyka = () => { setWelcomeLeaving(true); window.setTimeout(() => setWelcomeOpen(false), 760); };
 
@@ -184,7 +191,7 @@ export function Shell({ children }) {
     <div className="app-shell">
       {!six && (
         <header className="nav-shell">
-          <TransitionLink href="/hq" className="brand" aria-label="LYKA home" onClick={()=>{const n=brandTaps+1;setBrandTaps(n);if(n>=3)revealSecret(0)}} data-lyka-hunt="signal" data-hunt-index="0">
+          <TransitionLink href="/hq" className="brand" aria-label="LYKA home" onClick={()=>{const n=brandTaps+1;setBrandTaps(n);if(n>=3)revealSecret(0)}}>
             <span className="brand-icon"><img src="/lyka-mark.svg" alt="" /></span>
             <span className="brand-copy"><b>LYKA</b><small>FIELD SYSTEM / 032</small></span>
           </TransitionLink>
@@ -208,7 +215,7 @@ export function Shell({ children }) {
         <button className="ghee-catch-button" onClick={()=>{if(ghee<100){refill(Math.min(100,ghee+5));setGheeCatches(v=>v+1);revealSecret(2)}}} disabled={ghee>=100}><span>🥣</span><b>{ghee>=100?'RESERVE FULL':'CATCH GHEE'}</b><em>{ghee>=100?'100%':'CATCH #'+(gheeCatches+1)}</em></button>
         <div className="ghee-catcher-stats"><span>CATCHES <b>{gheeCatches}</b></span><span>COOL <b>{cool}</b></span><span>STATUS <b>{ghee>=80?'STABLE':'LOW'}</b></span></div>
       </div>}
-      {searchOpen && !six && <div className="lyka-search-overlay" onClick={()=>setSearchOpen(false)}><div className="lyka-search-panel" onClick={e=>e.stopPropagation()}><div className="search-head"><span>LYKA / GLOBAL INDEX</span><button onClick={()=>setSearchOpen(false)}>×</button></div><input autoFocus value={search} onChange={e=>{setSearch(e.target.value);if(e.target.value.trim().toLowerCase()==='lyka')revealSecret(5)}} onChange={e=>setSearch(e.target.value)} placeholder="Search rooms, systems, routes…"/><div className="search-results">{allLinks.filter(([href,label])=>(label+' '+href).toLowerCase().includes(search.toLowerCase())).map(([href,label],i)=><TransitionLink key={href} href={href} onClick={()=>setSearchOpen(false)}><b>{String(i+1).padStart(2,'0')}</b><span>{label}</span><em>{href}</em></TransitionLink>)}{!allLinks.some(([href,label])=>(label+' '+href).toLowerCase().includes(search.toLowerCase()))&&<p>NO MATCH / TRY ANOTHER SIGNAL.</p>}</div><small className="search-foot">ENTER A ROOM · ESC/CLOSE TO EXIT</small></div></div>}
+      {searchOpen && !six && <div className="lyka-search-overlay" onClick={()=>setSearchOpen(false)}><div className="lyka-search-panel" onClick={e=>e.stopPropagation()}><div className="search-head"><span>LYKA / GLOBAL INDEX</span><button onClick={()=>setSearchOpen(false)}>×</button></div><input autoFocus value={search} onChange={e=>{setSearch(e.target.value);if(e.target.value.trim().toLowerCase()==='lyka')revealSecret(5)}} placeholder="Search rooms, systems, routes…"/><div className="search-results">{allLinks.filter(([href,label])=>(label+' '+href).toLowerCase().includes(search.toLowerCase())).map(([href,label],i)=><TransitionLink key={href} href={href} onClick={()=>setSearchOpen(false)}><b>{String(i+1).padStart(2,'0')}</b><span>{label}</span><em>{href}</em></TransitionLink>)}{!allLinks.some(([href,label])=>(label+' '+href).toLowerCase().includes(search.toLowerCase()))&&<p>NO MATCH / TRY ANOTHER SIGNAL.</p>}</div><small className="search-foot">ENTER A ROOM · ESC/CLOSE TO EXIT</small></div></div>}
 
       {menu && !six && (
         <div className="nav-overlay" onClick={() => setMenu(false)}>
@@ -279,11 +286,6 @@ export function Shell({ children }) {
           {route:'/archive',index:8,left:'96%',top:'91%',kind:'hard'},
           {route:'/hq',index:9,left:'50.5%',top:'11%',kind:'genius'}
         ];
-        const routeSignals = {'/maths-sir':3,'/mission':4,'/photos':8};
-        const routeSignal = routeSignals[path];
-        if (routeSignal !== undefined && !hunt.includes(routeSignal)) {
-          window.setTimeout(() => revealSecret(routeSignal), path === '/mission' ? 1800 : 1200);
-        }
         const spot=null;
         return null;
       })()}
