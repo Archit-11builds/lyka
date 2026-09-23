@@ -70,29 +70,8 @@ export function Shell({ children }) {
 
   useEffect(() => {
     if (!six) return;
-    const lock = () => history.pushState({ six: true }, '', location.href);
-    history.pushState({ six: true }, '', location.href);
-    addEventListener('popstate', lock);
-    const key = (e) => {
-      if (e.key === 'Escape' || (e.altKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight'))) {
-        e.preventDefault();
-        e.stopPropagation();
-        history.pushState({ six: true }, '', location.href);
-      }
-    };
-    addEventListener('keydown', key, true);
-    const before = (e) => {
-      e.preventDefault();
-      e.returnValue = 'LYKA SIX MODE is still active.';
-    };
-    addEventListener('beforeunload', before);
     document.body.classList.add('six-locked');
-    return () => {
-      removeEventListener('popstate', lock);
-      removeEventListener('keydown', key, true);
-      removeEventListener('beforeunload', before);
-      document.body.classList.remove('six-locked');
-    };
+    return () => document.body.classList.remove('six-locked');
   }, [six]);
 
   const playSixWarning = () => {
@@ -194,7 +173,7 @@ export function Shell({ children }) {
     setStep(0);
     setMsg('');
     setQ(sixQuestions[Math.floor(Math.random() * sixQuestions.length)]);
-    window.setTimeout(startSixAudio, 40);
+    startSixAudio();
   };
 
   const answer = (value) => {
@@ -269,8 +248,12 @@ export function Shell({ children }) {
       {sixWarning && !six && (
         <div className="six-warning" role="dialog" aria-modal="true" aria-label="SIX MODE WARNING">
           <div className="six-warning-card">
-            <span>⚠</span><h2>SIX MODE WARNING</h2>
-            <button onClick={confirmSix}>ENTER SIX</button>
+            <div className="six-warning-signal"><span>⚠</span><i></i><i></i><i></i></div>
+            <small className="six-warning-code">FIELD 032 / RESTRICTED PROTOCOL</small>
+            <h2>SIX MODE WARNING</h2>
+            <p className="six-warning-copy">Five consecutive hard questions. One mistake resets the streak. Audio and cinematic lockdown effects will activate.</p>
+            <div className="six-warning-meta"><span>5 QUESTIONS</span><span>NO SKIP</span><span>LOCKDOWN FX</span></div>
+            <button onClick={confirmSix}>ENTER SIX ↗</button>
             <button onClick={()=>setSixWarning(false)}>CANCEL</button>
           </div>
         </div>
@@ -321,8 +304,8 @@ export function Shell({ children }) {
             <div className="welcome-layout">
               <div className="welcome-copy">
                 <span className="welcome-kicker">LYKA — ANIK FIELD SYSTEM</span>
-                <h1>Ready to enter<br/><em>the cool side?</em></h1>
-                <p className="welcome-hindi">Kya aap Anik ki cool duniya mein jaane ke liye ready hain?</p>
+                <h1>Enter the archive.<br/><em>Leave ordinary behind.</em></h1>
+                <p className="welcome-hindi">Kya aap Anik ki private duniya mein enter karne ke liye ready hain?</p>
                 <p className="welcome-sub">A private archive of rooms, evidence, chaos and things that probably did not need to be documented.</p>
                 <button className="welcome-enter" onClick={enterLyka}><span>ENTER THE ARCHIVE</span><b>↗</b></button>
               </div>
@@ -351,6 +334,7 @@ export function Shell({ children }) {
             ))}
           </div>
           <div className="six-panel">
+            <button className="six-safe-exit" onClick={() => { stopSixAudio(); setSix(false); setMsg(''); }}>EXIT SIX</button>
             <div className="six-top"><span>LYKA / SIX PROTOCOL</span><b>STREAK {step}/5</b></div>
             <div className="six-status"><i/> LOCKDOWN ACTIVE <em>◉ AUDIO LOOP</em></div>
             <div className="six-badge">VI</div>
