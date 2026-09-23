@@ -10,15 +10,16 @@ import { sixQuestions } from '../lib/data';
 import { AnikAIWidget } from './AnikAIWidget';
 
 const links = [
-  ['/hq', 'HQ'], ['/roast', 'Roast'], ['/maths-sir', 'Maths'],
-  ['/mission', 'Orbit'], ['/memes', 'Vault'], ['/archive', 'Archive'],
+  ['/hq', 'HQ'], ['/roast', 'Roast'], ['/maths-sir', 'Maths'], ['/mission', 'Orbit'],
 ];
 const allLinks = [...links, ['/ai', 'LYKA AI'], ['/chaos', 'Chaos'], ['/iq', 'Anik IQ'], ['/live', 'Live Feed'], ['/incidents', 'Incident Room'], ['/lmao', 'LMAO Lab'], ['/photos', 'Photos'], ['/about', 'About']];
 
 export function Shell({ children }) {
   const path = usePathname();
-  const { ghee, cool, six, setSix } = useSite();
+  const { ghee, cool, six, setSix, refill } = useSite();
   const [menu, setMenu] = useState(false);
+  const [gheeOpen, setGheeOpen] = useState(false);
+  const [gheeCatches, setGheeCatches] = useState(0);
     const [step, setStep] = useState(0);
   const [q, setQ] = useState(() => sixQuestions[Math.floor(Math.random() * sixQuestions.length)]);
   const [msg, setMsg] = useState('');
@@ -164,20 +165,25 @@ export function Shell({ children }) {
             <span className="brand-icon"><img src="/lyka-mark.svg" alt="" /></span>
             <span className="brand-copy"><b>LYKA</b><small>FIELD SYSTEM / 032</small></span>
           </TransitionLink>
-          <nav className="main-nav" aria-label="LYKA navigation">
-            {allLinks.map(([href, label], index) => (
-              <TransitionLink key={href} href={href} className={path === href ? 'active' : ''}>
-                <span>{label}</span>{index >= links.length && <i>NEW</i>}
-              </TransitionLink>
+          <nav className="main-nav" aria-label="LYKA primary navigation">
+            {links.map(([href, label]) => (
+              <TransitionLink key={href} href={href} className={path === href ? 'active' : ''}><span>{label}</span></TransitionLink>
             ))}
           </nav>
           <div className="nav-right"><TransitionLink href="/ai" className="ai-nav-button">AI ↗</TransitionLink><button className="global-search-trigger" onClick={()=>setSearchOpen(true)} title="Search LYKA">⌕ <span>SEARCH</span></button>
-            <button className={'hunt-pill '+(hunt.length===10?'complete':'')} title="Secret Hunt progress · press H" onClick={()=>setHuntPanel(v=>!v)}><i/> HUNT <b>{hunt.length}/10</b></button><span className="ghee-pill"><i />GHEE <b>{ghee}%</b></span>
+            <button className={'hunt-pill '+(hunt.length===10?'complete':'')} title="Secret Hunt progress · press H" onClick={()=>setHuntPanel(v=>!v)}><i/> HUNT <b>{hunt.length}/10</b></button><button className={"ghee-pill "+(gheeOpen?"open":"")} onClick={()=>setGheeOpen(v=>!v)} title="Open Ghee Catcher"><i />GHEE <b>{ghee}%</b><em>↗</em></button>
             <button className="index-button" onClick={() => setMenu((v) => !v)}><i /><span>{menu ? 'CLOSE' : 'INDEX'}</span></button>
           </div>
         </header>
       )}
 
+      {gheeOpen && !six && <div className="ghee-catcher-popover" role="dialog" aria-label="Ghee Catcher">
+        <div className="ghee-catcher-head"><span>LYKA / RESOURCE LAB</span><button onClick={()=>setGheeOpen(false)}>×</button></div>
+        <div className="ghee-catcher-read"><div><small>GHEE RESERVE</small><strong>{ghee}<b>%</b></strong></div><span>+5 / CATCH</span></div>
+        <div className="ghee-catcher-meter"><i style={{width:ghee+'%'}}/><span>{ghee}%</span></div>
+        <button className="ghee-catch-button" onClick={()=>{if(ghee<100){refill(Math.min(100,ghee+5));setGheeCatches(v=>v+1)}}} disabled={ghee>=100}><span>🥣</span><b>{ghee>=100?'RESERVE FULL':'CATCH GHEE'}</b><em>{ghee>=100?'100%':'CATCH #'+(gheeCatches+1)}</em></button>
+        <div className="ghee-catcher-stats"><span>CATCHES <b>{gheeCatches}</b></span><span>COOL <b>{cool}</b></span><span>STATUS <b>{ghee>=80?'STABLE':'LOW'}</b></span></div>
+      </div>}
       {searchOpen && !six && <div className="lyka-search-overlay" onClick={()=>setSearchOpen(false)}><div className="lyka-search-panel" onClick={e=>e.stopPropagation()}><div className="search-head"><span>LYKA / GLOBAL INDEX</span><button onClick={()=>setSearchOpen(false)}>×</button></div><input autoFocus value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search rooms, systems, routes…"/><div className="search-results">{allLinks.filter(([href,label])=>(label+' '+href).toLowerCase().includes(search.toLowerCase())).map(([href,label],i)=><TransitionLink key={href} href={href} onClick={()=>setSearchOpen(false)}><b>{String(i+1).padStart(2,'0')}</b><span>{label}</span><em>{href}</em></TransitionLink>)}{!allLinks.some(([href,label])=>(label+' '+href).toLowerCase().includes(search.toLowerCase()))&&<p>NO MATCH / TRY ANOTHER SIGNAL.</p>}</div><small className="search-foot">ENTER A ROOM · ESC/CLOSE TO EXIT</small></div></div>}
 
       {menu && !six && (
