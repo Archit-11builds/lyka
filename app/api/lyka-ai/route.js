@@ -52,7 +52,7 @@ export async function POST(request) {
   try {
     const key = process.env.GEMINI_API_KEY;
     if (!key) {
-      return Response.json({ error: 'LYKA AI is not connected yet. Add GEMINI_API_KEY in Vercel environment variables.' }, { status: 503 });
+      return Response.json({ error: 'GEMINI_API_KEY is missing on the deployed server. Add it to Vercel Environment Variables, then redeploy.' }, { status: 503 });
     }
 
     const body = await request.json();
