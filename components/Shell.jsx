@@ -254,7 +254,7 @@ export function Shell({ children }) {
         </div>
       )}
 
-      <main>{children}</main>{!six && <div className="home-six-launcher">{sixBtn}</div>}
+      <main>{children}</main>{!six && path === '/' && <div className="home-six-launcher">{sixBtn}</div>}
       {huntPanel && !six && <div className="hunt-panel"><div><span className="eyebrow">LYKA / SECRET HUNT</span><button onClick={()=>setHuntPanel(false)}>×</button></div><h3>{hunt.length}/10 <em>found.</em></h3><div className="hunt-progress"><i style={{width:(hunt.length*10)+'%'}}/><span>{hunt.length*10}%</span></div><p>{hunt.length===10?'Every field task is complete. The final challenge is unlocked.':'This is no logo hunt. LYKA hides actions, signals and tiny system behaviours. Follow the clues, experiment, and the archive will remember.'}</p><div className="hunt-map">
 {[
 ['BRAND SIGNAL','01','Warm-up','LYKA ko teen baar visit karo.'],
