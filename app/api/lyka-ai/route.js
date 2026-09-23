@@ -78,11 +78,14 @@ export async function POST(request) {
       }
     }
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 25000);
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${encodeURIComponent(key)}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: LYKA_CONTEXT + contextNote }] },
           contents: contents.length ? contents : [{ role: 'user', parts: [{ text: 'Introduce yourself as LYKA AI.' }] }],
@@ -91,6 +94,7 @@ export async function POST(request) {
       }
     );
 
+    clearTimeout(timeout);
     const data = await response.json();
     if (!response.ok) {
       console.error('LYKA AI provider error:', data);
@@ -103,6 +107,7 @@ export async function POST(request) {
     return Response.json({ text });
   } catch (error) {
     console.error('LYKA AI route error:', error);
-    return Response.json({ error: 'LYKA AI could not process that signal.' }, { status: 500 });
+    if (error?.name === 'AbortError') return Response.json({ error: 'Gemini took too long to respond. Try again.' }, { status: 504 });
+    return Response.json({ error: error?.message || 'LYKA AI could not process that signal.' }, { status: 500 });
   }
 }
