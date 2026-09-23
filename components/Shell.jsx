@@ -156,15 +156,46 @@ export function Shell({ children }) {
   const runCommand = value => { if(value.trim().toLowerCase()==='field-032'){revealSecret(6);setCommandOpen(false);setCommand('');return;} const map={hq:'/hq',roast:'/roast',maths:'/maths-sir',orbit:'/mission',vault:'/memes',archive:'/archive',lmao:'/lmao',live:'/live',incidents:'/incidents',photos:'/photos',about:'/about',ai:'/ai'}; const key=value.trim().toLowerCase().replace(/^\//,''); if(map[key]){setCommandOpen(false);router.push(map[key])} };
   const enterLyka = () => { setWelcomeLeaving(true); window.setTimeout(() => setWelcomeOpen(false), 760); };
 
+  const startSixAudio = () => {
+    try {
+      if (sixAudioRef.current) sixAudioRef.current.stop?.();
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      const ctx = new Ctx();
+      const master = ctx.createGain();
+      master.gain.value = 0.82;
+      master.connect(ctx.destination);
+      const pulse = () => {
+        const now = ctx.currentTime;
+        [110, 165, 220].forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = i === 1 ? 'sawtooth' : 'square';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.0001, now);
+          gain.gain.exponentialRampToValueAtTime(0.11, now + 0.035);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.48);
+          osc.connect(gain); gain.connect(master); osc.start(now); osc.stop(now + 0.5);
+        });
+      };
+      pulse();
+      const id = window.setInterval(pulse, 850);
+      sixAudioRef.current = { stop: () => { window.clearInterval(id); ctx.close().catch(()=>{}); } };
+    } catch {}
+  };
+  const stopSixAudio = () => { try { sixAudioRef.current?.stop?.(); } catch {} sixAudioRef.current = null; };
   const openSix = () => {
-    playSixWarning();
     setMenu(false);
     setHuntPanel(false);
+    setSixWarning(true);
+  };
+  const confirmSix = () => {
+    setSixWarning(false);
     setSix(true);
     setStep(0);
     setMsg('');
-    setHuntPanel(false);
     setQ(sixQuestions[Math.floor(Math.random() * sixQuestions.length)]);
+    window.setTimeout(startSixAudio, 40);
   };
 
   const answer = (value) => {
@@ -176,6 +207,7 @@ export function Shell({ children }) {
     }
     const next = step + 1;
     if (next >= 5) {
+      stopSixAudio();
       setSix(false);
       setStep(0);
       setMsg('');
@@ -231,6 +263,16 @@ export function Shell({ children }) {
               <button className="dial-six" onClick={openSix}><span>⚡</span><b>SIX</b></button>
             </div>
             <div className="dial-footer"><span>{allLinks.length} ROOMS</span><b>{allLinks.find(([href])=>href===path)?.[1] || 'FIELD'}</b><span>SELECT A SIGNAL</span></div>
+          </div>
+        </div>
+      )}
+
+      {sixWarning && !six && (
+        <div className="six-warning" role="dialog" aria-modal="true" aria-label="SIX MODE WARNING">
+          <div className="six-warning-card">
+            <span>⚠</span><h2>SIX MODE WARNING</h2>
+            <button onClick={confirmSix}>ENTER SIX</button>
+            <button onClick={()=>setSixWarning(false)}>CANCEL</button>
           </div>
         </div>
       )}
@@ -310,19 +352,24 @@ export function Shell({ children }) {
             ))}
           </div>
           <div className="six-panel">
-            <div className="six-top"><span>SIX / LOCKDOWN</span><b>{step}/5</b></div>
-            <div className="six-badge">6</div>
-            <h1>MEETHE LOG<br /><i>AA GAYE.</i></h1>
-            <p>Normal navigation band. Five sahi jawab chahiye. Galat hua toh streak <b>0</b>.</p>
+            <div className="six-top"><span>LYKA / SIX PROTOCOL</span><b>STREAK {step}/5</b></div>
+            <div className="six-status"><i/> LOCKDOWN ACTIVE <em>◉ AUDIO LOOP</em></div>
+            <div className="six-badge">VI</div>
+            <div className="six-kicker">FIELD 032 / FINAL GATE</div>
+            <h1>SIX<br /><i>PROTOCOL.</i></h1>
+            <p className="six-sub">Five consecutive correct answers. One mistake resets the sequence.</p>
+            <div className="six-streak" aria-label={"Streak " + step + " of 5"}>
+              {[0,1,2,3,4].map(i=><span key={i} className={i<step?'lit':''}>{String(i+1).padStart(2,'0')}</span>)}
+            </div>
             <div className="six-question">
-              <small>SECURITY CHECK</small>
+              <div className="six-q-head"><small>SECURITY QUESTION {step+1}/5</small><b>NO SKIP</b></div>
               <h2>{q.q}</h2>
               <div className="six-options">
-                {q.opts.map((option) => <button key={option} onClick={() => answer(option)}>{option}</button>)}
+                {q.opts.map((option) => <button key={option} onClick={() => answer(option)}>{option}<span>↗</span></button>)}
               </div>
               {msg && <div className="six-msg">{msg}</div>}
             </div>
-            <div className="six-foot">Navigation sealed • Broken by Anik's family™</div>
+            <div className="six-foot"><span>ROUTE SEALED</span><span>ANSWER IN SEQUENCE</span><span>AUDIO ACTIVE</span></div>
           </div>
         </div>
       )}
