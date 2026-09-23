@@ -21,6 +21,8 @@ export function Shell({ children }) {
   const [gheeOpen, setGheeOpen] = useState(false);
   const [gheeCatches, setGheeCatches] = useState(0);
   const [noticeOpen, setNoticeOpen] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [command, setCommand] = useState('');
     const [step, setStep] = useState(0);
   const [q, setQ] = useState(() => sixQuestions[Math.floor(Math.random() * sixQuestions.length)]);
   const [msg, setMsg] = useState('');
@@ -123,6 +125,8 @@ export function Shell({ children }) {
 
   useEffect(()=>{ if(hunt.length===10){setEndgame(true)} },[hunt.length]);
 
+  useEffect(() => { const onKey=e=>{ if(e.key==='/' && !['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)){e.preventDefault();setCommandOpen(true)} if(e.key==='Escape')setCommandOpen(false)}; window.addEventListener('keydown',onKey); return ()=>window.removeEventListener('keydown',onKey)}, []);
+  const runCommand = value => { const map={hq:'/hq',roast:'/roast',maths:'/maths-sir',orbit:'/mission',vault:'/memes',archive:'/archive',lmao:'/lmao',live:'/live',incidents:'/incidents',photos:'/photos',about:'/about',ai:'/ai'}; const key=value.trim().toLowerCase().replace(/^\//,''); if(map[key]){setCommandOpen(false);router.push(map[key])} };
   const closeUpdate = () => {
     if (updateStage === 1) { setUpdateStage(2); return; }
     setUpdateOpen(false);
@@ -292,6 +296,7 @@ export function Shell({ children }) {
           </div>
         </div>
       )}
+      {commandOpen && !six && <div className="command-overlay" onClick={()=>setCommandOpen(false)}><div className="command-box" onClick={e=>e.stopPropagation()}><div className="command-top"><span>LYKA / COMMAND PALETTE</span><kbd>ESC</kbd></div><input autoFocus value={command} onChange={e=>{setCommand(e.target.value);runCommand(e.target.value)}} onKeyDown={e=>{if(e.key==='Enter')runCommand(command)}} placeholder="Jump to a room…  /" /><small>HQ · Roast · Maths · Orbit · Archive · AI · Live · Photos</small></div></div>}
       {!six && <AnikAIWidget route={path} ghee={ghee} cool={cool} />}
       <GlobalFX />
       <Danger />
