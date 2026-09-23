@@ -160,32 +160,29 @@ export function Shell({ children }) {
 
   const startSixAudio = () => {
     try {
-      if (sixAudioRef.current) sixAudioRef.current.stop?.();
-      const Ctx = window.AudioContext || window.webkitAudioContext;
-      if (!Ctx) return;
-      const ctx = new Ctx();
-      const master = ctx.createGain();
-      master.gain.value = 0.82;
-      master.connect(ctx.destination);
-      const pulse = () => {
-        const now = ctx.currentTime;
-        [110, 165, 220].forEach((freq, i) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = i === 1 ? 'sawtooth' : 'square';
-          osc.frequency.setValueAtTime(freq, now);
-          gain.gain.setValueAtTime(0.0001, now);
-          gain.gain.exponentialRampToValueAtTime(0.11, now + 0.035);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.48);
-          osc.connect(gain); gain.connect(master); osc.start(now); osc.stop(now + 0.5);
-        });
-      };
-      pulse();
-      const id = window.setInterval(pulse, 850);
-      sixAudioRef.current = { stop: () => { window.clearInterval(id); ctx.close().catch(()=>{}); } };
-    } catch {}
+      if (sixAudioRef.current) sixAudioRef.current.pause?.();
+      const audio = new Audio('/six-warning.mp3');
+      audio.loop = true;
+      audio.volume = 0.85;
+      audio.preload = 'auto';
+      const play = audio.play();
+      if (play?.catch) play.catch(err => console.warn('SIX audio could not autoplay:', err));
+      sixAudioRef.current = audio;
+    } catch (error) {
+      console.warn('SIX audio setup failed:', error);
+    }
   };
-  const stopSixAudio = () => { try { sixAudioRef.current?.stop?.(); } catch {} sixAudioRef.current = null; };
+  const stopSixAudio = () => {
+    try {
+      const audio = sixAudioRef.current;
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.src = '';
+      }
+    } catch {}
+    sixAudioRef.current = null;
+  };
   const openSix = () => {
     setMenu(false);
     setHuntPanel(false);
