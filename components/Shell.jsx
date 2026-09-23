@@ -280,7 +280,7 @@ export function Shell({ children }) {
           </div>
           <div className="release-footer"><span>NO ACCOUNT / LOCAL PROGRESS</span><button className="release-primary" onClick={closeUpdate}>ENTER LYKA ↗</button></div>
         </>}
-      </div></div>
+      </div></div>}
       {!six && <AnikAIWidget route={path} ghee={ghee} cool={cool} />}
       <GlobalFX />
       <Danger />
