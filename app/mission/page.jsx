@@ -21,6 +21,8 @@ export default function Mission() {
   const [heat, setHeat] = useState(18), [message, setMessage] = useState('Choose a world. Then launch LYKA-01.');
   const [event, setEvent] = useState('SYSTEM NOMINAL'), [hazard, setHazard] = useState(false);
   const [missionComplete, setMissionComplete] = useState(false), [telemetry, setTelemetry] = useState(7420); const [eventLog,setEventLog]=useState([]);
+  const [assist, setAssist] = useState('BALANCED');
+  const [flightGrade, setFlightGrade] = useState('—');
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -41,11 +43,17 @@ export default function Mission() {
   }, [phase, orbit, distance, destination.distance]);
 
   const selectDestination = next => {
-    if (phase === 0) { setDestination(next); setMessage('COURSE LOCKED / ' + next.name + '. Launch when ready.'); }
+    if (phase === 0) { setDestination(next); setMessage('COURSE LOCKED / ' + next.name + '. Select a flight profile, then launch.'); }
+  };
+  const applyAssist = profile => {
+    if (phase !== 0) return;
+    setAssist(profile);
+    setMessage(profile === 'SAFE' ? 'SAFE PROFILE / stronger shields, lower score multiplier.' : profile === 'FAST' ? 'FAST PROFILE / higher score, tighter resource margins.' : 'BALANCED PROFILE / standard LYKA-01 parameters.');
+    setEvent('FLIGHT PROFILE / ' + profile);
   };
   const launch = () => {
     if (phase !== 0) return;
-    setPhase(1); setFuel(v => v - 8); setScore(v => v + 100);
+    setPhase(1); setFuel(v => v - 8); setScore(v => v + (assist === 'FAST' ? 130 : assist === 'SAFE' ? 80 : 100));
     setMessage('Launch clean. Now stabilize the orbital insertion.'); setEvent('ASCENT / THRUST NOMINAL');
   };
   const stabilizeOrbit = () => {
@@ -97,7 +105,11 @@ export default function Mission() {
   const dock = () => {
     if (phase !== 3 || distance < destination.distance * .86) return;
     if (hull <= 20 || oxygen <= 8) { setMessage('DOCKING ABORTED. Hull or oxygen is too low.'); setEvent('ABORT / SAFETY LIMIT'); return; }
-    setPhase(4); setMissionComplete(true); setScore(v => v + 500 + cargo * 100);
+    setPhase(4); setMissionComplete(true);
+    const finalHealth = Math.round((fuel + hull + oxygen + shield) / 4);
+    const grade = finalHealth >= 85 && cargo >= 2 ? 'S' : finalHealth >= 70 ? 'A' : finalHealth >= 50 ? 'B' : 'C';
+    setFlightGrade(grade);
+    setScore(v => v + 500 + cargo * 100 + (grade === 'S' ? 300 : grade === 'A' ? 150 : 0));
     setMessage(destination.name + ' arrival confirmed. Mission complete.'); setEvent('LANDING / SUCCESS');
   };
   const emergency = () => {
@@ -109,14 +121,21 @@ export default function Mission() {
   const reset = () => {
     setPhase(0); setOrbit(0); setDistance(0); setFuel(100); setHull(100); setOxygen(100); setShield(70);
     setCargo(0); setScore(0); setHeat(18); setScan(false); setHazard(false); setMissionComplete(false);
-    setMessage('Choose a world. Then launch LYKA-01.'); setEvent('SYSTEM NOMINAL'); setEventLog([]);
+    setMessage('Choose a world. Select a flight profile. Then launch LYKA-01.'); setEvent('SYSTEM NOMINAL'); setEventLog([]); setAssist('BALANCED'); setFlightGrade('—');
   };
   const health = Math.round((fuel + hull + oxygen + shield) / 4);
 
   return <div className="page mission-page mission-v5">
-    <div className="page-title mission-title"><div><span className="eyebrow">ROOM 03 / LYKA-01 / SPACE PROGRAM</span><h1>Earth to <em>deep space.</em></h1><p className="lede">A proper flight deck: stabilize orbit, manage resources, dodge hazards, collect cargo and dock at your chosen world.</p></div><div className="mission-score"><span>MISSION SCORE</span><b>{String(score).padStart(4,'0')}</b><small>{phases[phase]} / {destination.name}</small></div></div>
+    <div className="page-title mission-title"><div><span className="eyebrow">ROOM 03 / LYKA-01 / SPACE PROGRAM</span><h1>Earth to <em>deep space.</em></h1><p className="lede">A proper flight deck: stabilize orbit, manage resources, dodge hazards, collect cargo and dock at your chosen world.</p></div><div className="mission-score"><span>MISSION SCORE</span><b>{String(score).padStart(4,'0')}</b><small>{phases[phase]} / {destination.name} {missionComplete ? '· GRADE '+flightGrade : ''}</small></div></div>
     <div className="mission-modebar glass"><div><b>{phases[phase]}</b><span> → {destination.name}</span></div><div className="mission-progress"><i style={{width:Math.min(100,progress)+'%'}}/></div><span className="mission-telemetry">TLM {telemetry.toLocaleString()} KM</span><button onClick={reset}>RESET ↻</button></div>
     <div className="destination-row mission-destinations">{destinations.map(d=><button key={d.name} className={destination.name===d.name?'active':''} disabled={phase!==0} onClick={()=>selectDestination(d)}><span>DESTINATION / {d.difficulty}</span><b>{d.name}</b><small>{d.distance} AU · {d.desc}</small></button>)}</div>
+    <section className="mission-brief glass">
+      <div><span>FLIGHT PROFILE</span><b>{assist}</b><small>Changes resource margins and launch score.</small></div>
+      <div className="mission-profiles">
+        {['SAFE','BALANCED','FAST'].map(profile=><button key={profile} className={assist===profile?'active':''} disabled={phase!==0} onClick={()=>applyAssist(profile)}><b>{profile}</b><small>{profile==='SAFE'?'+shield / −score':' '+(profile==='FAST'?'+score / −margin':'standard profile')}</small></button>)}
+      </div>
+      <div className="mission-objective"><span>OBJECTIVE</span><b>{missionComplete ? destination.name+' SECURED / GRADE '+flightGrade : phase===0 ? 'SELECT WORLD → PROFILE → LAUNCH' : phase===1 ? 'STABILIZE 3 ORBIT LOCKS' : phase===2 ? 'REACH 78% + MANAGE SYSTEMS' : phase===3 ? 'DOCK ABOVE 86%' : 'MISSION COMPLETE'}</b></div>
+    </section>
     <Reveal className="mission-game mission-game-v5">
       <section className={'flight-map space-'+phase+' '+destination.color}>
         <div className="space-stars">{Array.from({length:46},(_,i)=><i key={i} style={{left:((i*37)%100)+'%',top:((i*61)%100)+'%',animationDelay:(i%9)*.22+'s'}}/>)}</div><div className="nebula-glow"/>
