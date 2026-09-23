@@ -252,18 +252,21 @@ export function Shell({ children }) {
       )}
 
       <main>{children}</main>
-      {huntPanel && !six && <div className="hunt-panel"><div><span className="eyebrow">LYKA / SECRET HUNT</span><button onClick={()=>setHuntPanel(false)}>×</button></div><h3>{hunt.length}/10 <em>found.</em></h3><div className="hunt-progress"><i style={{width:(hunt.length*10)+'%'}}/><span>{hunt.length*10}%</span></div><p>{hunt.length===10?'Every field task is complete. The final challenge is unlocked.':'This is no logo hunt. LYKA hides actions, signals and tiny system behaviours. Follow the clues, experiment, and the archive will remember.'}</p><div className="hunt-hints">{[
-['BRAND SIGNAL','LYKA ko teen baar visit karo.'],
-['DEEP SCROLL','Kisi room ko seriously scroll karo.'],
-['GHEE RESERVE','Ghee Catcher se ek reserve catch karo.'],
-['MATHS VECTOR','Maths Lab mein enter karo.'],
-['ORBIT CHECK','Orbit ko thoda time do.'],
-['SEARCH TRACE','Global Search mein secret word “LYKA” type karo.'],
-['COMMAND TRACE','Command palette mein field-032 enter karo.'],
-['AI SIGNAL','ANIK.EXE ko activate karo.'],
-['INDEX TRACE','Photos/Archive signal discover karo.'],
-['FIELD PHRASE','Final clue unlock hone ke baad field phrase follow karo.']
-].map(([name,clue],i)=><div key={name} className={hunt.includes(i)?'found':''}><b>{String(i+1).padStart(2,'0')}</b><span>{hunt.includes(i)?'✓ '+name:name+' — '+clue}</span></div>)}</div></div>}
+      {huntPanel && !six && <div className="hunt-panel"><div><span className="eyebrow">LYKA / SECRET HUNT</span><button onClick={()=>setHuntPanel(false)}>×</button></div><h3>{hunt.length}/10 <em>found.</em></h3><div className="hunt-progress"><i style={{width:(hunt.length*10)+'%'}}/><span>{hunt.length*10}%</span></div><p>{hunt.length===10?'Every field task is complete. The final challenge is unlocked.':'This is no logo hunt. LYKA hides actions, signals and tiny system behaviours. Follow the clues, experiment, and the archive will remember.'}</p><div className="hunt-map">
+{[
+['BRAND SIGNAL','01','Warm-up','LYKA ko teen baar visit karo.'],
+['DEEP SCROLL','02','Easy','Kisi room ko seriously scroll karo.'],
+['GHEE RESERVE','03','Easy','Ghee Catcher se ek reserve catch karo.'],
+['MATHS VECTOR','04','Medium','Maths Lab mein enter karo.'],
+['ORBIT CHECK','05','Medium','Orbit ko thoda time do.'],
+['SEARCH TRACE','06','Medium','Global Search mein secret word “LYKA” type karo.'],
+['COMMAND TRACE','07','Hard','Command palette mein field-032 enter karo.'],
+['AI SIGNAL','08','Hard','ANIK.EXE ko activate karo.'],
+['INDEX TRACE','09','Hard','Photos room mein archive signal discover karo.'],
+['FIELD PHRASE','10','FINAL','Final clue unlock hone ke baad field phrase follow karo.']
+].map(([name,num,diff,clue],i)=><div key={name} className={'hunt-node '+(hunt.includes(i)?'found ':'')+(i===hunt.length?'next':'')}><div className="hunt-node-top"><b>{num}</b><span>{diff}</span>{hunt.includes(i)&&<i>FOUND</i>}</div><strong>{name}</strong><small>{hunt.includes(i)?'FIELD SIGNAL CAPTURED':i===hunt.length?clue:'SIGNAL LOCKED · FIND THE PREVIOUS TRACE'}</small></div>)}
+</div>
+<div className="hunt-next"><span>NEXT TRACE</span><b>{hunt.length<10?['BRAND SIGNAL','DEEP SCROLL','GHEE RESERVE','MATHS VECTOR','ORBIT CHECK','SEARCH TRACE','COMMAND TRACE','AI SIGNAL','INDEX TRACE','FIELD PHRASE'][hunt.length]:'ARCHIVE COMPLETE'}</b><small>{hunt.length<10?'One clue at a time. The archive will remember every find.':'All ten traces captured. Final field file unlocked.'}</small></div></div>}
       {(() => {
         const secretSpots = [
           {route:'/hq',index:0,left:'12%',top:'29%',kind:'easy'},
@@ -288,14 +291,19 @@ export function Shell({ children }) {
       {welcomeOpen && !six && (
         <div className={'welcome-overlay '+(welcomeLeaving?'leaving':'')} aria-label="LYKA welcome">
           <div className="welcome-card">
-            <div className="welcome-topline"><span>LYKA / FIELD SYSTEM</span><b>032</b></div>
+            <div className="welcome-topline"><span>ANIK / PRIVATE ARCHIVE</span><b>FIELD 032</b></div>
             <div className="welcome-ambient" aria-hidden="true"><i/><i/><i/></div>
-            <div className="welcome-mark"><img src="/lyka-mark.svg" alt="LYKA" /></div>
-            <span className="welcome-kicker">PRIVATE ARCHIVE · FIELD SYSTEM ONLINE</span>
-            <h1>Kya aap Anik ki<br/><em>cool duniya mein jaane ke liye ready hain?</em></h1>
-            <p>The archive is live. Step inside.</p>
-            <button className="welcome-enter" onClick={enterLyka}><span>ENTER LYKA</span><b>↗</b></button>
-            <div className="welcome-meta"><span>PRIVATE / 2026</span><span>FIELD SYSTEM 032</span><span>SECURE ENTRY</span></div>
+            <div className="welcome-layout">
+              <div className="welcome-copy">
+                <span className="welcome-kicker">LYKA — ANIK FIELD SYSTEM</span>
+                <h1>Ready to enter<br/><em>the cool side?</em></h1>
+                <p className="welcome-hindi">Kya aap Anik ki cool duniya mein jaane ke liye ready hain?</p>
+                <p className="welcome-sub">A private archive of rooms, evidence, chaos and things that probably did not need to be documented.</p>
+                <button className="welcome-enter" onClick={enterLyka}><span>ENTER THE ARCHIVE</span><b>↗</b></button>
+              </div>
+              <div className="welcome-hero-mark"><div className="welcome-ring r1"/><div className="welcome-ring r2"/><div className="welcome-mark"><img src="/lyka-mark.svg" alt="LYKA" /></div><span>032 / LIVE</span></div>
+            </div>
+            <div className="welcome-meta"><span>PRIVATE / 2026</span><span>NO ACCOUNT REQUIRED</span><span>FIELD SYSTEM ONLINE</span></div>
           </div>
         </div>
       )}
