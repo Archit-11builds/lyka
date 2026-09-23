@@ -756,3 +756,64 @@ button,.button,a{transition:transform .2s ease,box-shadow .2s ease,background .2
 .hunt-toast{border:1px solid rgba(255,255,255,.9)!important;background:rgba(245,246,243,.95)!important;box-shadow:0 18px 60px rgba(25,27,28,.18)!important;border-radius:13px!important;font:700 7px ui-monospace!important;letter-spacing:.1em!important}
 .hunt-celebration .celebration-card{background:linear-gradient(145deg,#fafbf8,#dfe2df)!important;border:1px solid rgba(255,255,255,.95)!important;box-shadow:0 45px 130px rgba(20,22,23,.25)!important;border-radius:28px!important}
 .hunt-endgame .endgame-card{background:linear-gradient(145deg,#fafbf8,#dfe2df)!important;border:1px solid rgba(255,255,255,.95)!important;box-shadow:0 55px 160px rgba(20,22,23,.3)!important;border-radius:30px!important}
+
+
+/* premium circular navigation dial */
+.premium-topbar{
+  height:76px!important;
+  padding:0 13px 0 16px!important;
+  border-radius:24px!important;
+  display:grid!important;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+}
+.topbar-center{display:flex;align-items:center;justify-content:center;gap:10px;color:#8b908c;font:6px ui-monospace;letter-spacing:.2em}
+.topbar-center i{width:4px;height:4px;border-radius:50%;background:#9b826b;box-shadow:0 0 0 4px rgba(155,130,107,.1)}
+.topbar-center b{color:#424746;font:800 7px ui-monospace;letter-spacing:.14em}
+.dial-trigger{
+  position:relative;width:52px;height:52px;margin-left:2px;border:1px solid rgba(255,255,255,.95);
+  border-radius:50%;background:linear-gradient(145deg,#fdfefb,#d9dcda);
+  box-shadow:0 10px 26px rgba(30,32,33,.12),inset 0 1px rgba(255,255,255,.95);
+  cursor:pointer;display:grid;place-items:center;color:#2a2e2f;
+}
+.dial-trigger:hover{transform:translateY(-2px) rotate(5deg);box-shadow:0 16px 34px rgba(30,32,33,.16)}
+.dial-trigger b{position:relative;z-index:3;font:800 5px ui-monospace;letter-spacing:.1em}
+.dial-trigger-ring{position:absolute;inset:7px;border:1px solid rgba(35,37,38,.13);border-radius:50%}
+.dial-trigger-ring i{position:absolute;width:3px;height:3px;border-radius:50%;background:#6f766f}
+.dial-trigger-ring i:nth-child(1){left:4px;top:50%}.dial-trigger-ring i:nth-child(2){right:4px;top:50%}.dial-trigger-ring i:nth-child(3){left:50%;bottom:4px}
+.dial-overlay{position:fixed;inset:0;z-index:280;display:grid;place-items:center;background:rgba(24,26,27,.2);backdrop-filter:blur(24px) saturate(.85);animation:dialIn .35s cubic-bezier(.16,1,.3,1)}
+.dial-stage{
+  width:min(920px,calc(100vw - 28px));height:min(800px,calc(100vh - 34px));border-radius:34px;
+  background:radial-gradient(circle at 50% 45%,rgba(255,255,255,.98),rgba(231,234,231,.96) 56%,rgba(207,211,208,.98));
+  border:1px solid rgba(255,255,255,.95);box-shadow:0 55px 170px rgba(16,18,19,.3),inset 0 1px rgba(255,255,255,.95);
+  position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;
+}
+.dial-stage:before{content:'';position:absolute;inset:18px;border:1px solid rgba(23,24,25,.06);border-radius:25px;pointer-events:none}
+.dial-topline{position:absolute;top:24px;left:27px;right:27px;display:flex;justify-content:space-between;align-items:center;color:#898e89;font:7px ui-monospace;letter-spacing:.16em}
+.dial-topline button{border:1px solid rgba(23,24,25,.1);background:rgba(255,255,255,.65);border-radius:8px;padding:7px 9px;color:#666b67;font:7px ui-monospace;cursor:pointer}
+.dial{position:relative;width:min(660px,76vw);height:min(660px,76vw);max-height:68vh;max-width:68vh;border-radius:50%;display:grid;place-items:center}
+.dial-orbit{position:absolute;border:1px solid rgba(35,38,39,.1);border-radius:50%;inset:4%;animation:dialSpin 26s linear infinite}
+.dial-orbit-b{inset:13%;border-style:dashed;opacity:.45;animation-duration:38s;animation-direction:reverse}
+.dial-core{position:absolute;width:154px;height:154px;border-radius:50%;display:grid;place-items:center;align-content:center;gap:7px;background:radial-gradient(circle at 35% 28%,#4a4e50,#17191a);border:1px solid rgba(255,255,255,.2);box-shadow:0 30px 70px rgba(20,22,23,.25),inset 0 1px rgba(255,255,255,.18);z-index:5;color:#fff;text-align:center}
+.dial-core img{width:46px;height:46px;border-radius:13px}.dial-core span{font:6px ui-monospace;letter-spacing:.18em;line-height:1.5;color:#bfc3bf}
+.dial-item{
+  --radius:min(28vw,245px);
+  position:absolute;left:50%;top:50%;width:116px;height:64px;margin:-32px -58px;
+  transform:rotate(var(--angle)) translateY(calc(var(--radius) * -1)) rotate(calc(var(--angle) * -1));
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;
+  color:#686e69;border:1px solid rgba(255,255,255,.75);border-radius:15px;
+  background:rgba(250,251,248,.58);box-shadow:0 12px 30px rgba(30,32,33,.07),inset 0 1px rgba(255,255,255,.85);
+  backdrop-filter:blur(12px);transition:all .28s cubic-bezier(.16,1,.3,1);z-index:6;
+}
+.dial-item:hover,.dial-item.active{transform:rotate(var(--angle)) translateY(calc((var(--radius) + 7px) * -1)) rotate(calc(var(--angle) * -1));background:#fff;color:#1e2223;box-shadow:0 18px 38px rgba(30,32,33,.13),inset 0 1px rgba(255,255,255,.95)}
+.dial-item span{font:6px ui-monospace;color:#9b9f9b}.dial-item b{font:800 9px ui-monospace;letter-spacing:.04em}.dial-item i{position:absolute;width:4px;height:4px;border-radius:50%;right:7px;top:7px;background:#9a826b}
+.dial-item.active i{background:#657f75;box-shadow:0 0 0 4px rgba(101,127,117,.12)}
+.dial-six{position:absolute;right:9%;bottom:12%;z-index:7;width:62px;height:62px;border-radius:50%;border:1px solid rgba(255,255,255,.85);background:linear-gradient(145deg,#34383a,#111315);color:#fff;display:grid;place-items:center;align-content:center;cursor:pointer;box-shadow:0 16px 35px rgba(20,22,23,.2)}
+.dial-six span{font-size:11px}.dial-six b{font:700 6px ui-monospace;letter-spacing:.12em}
+.dial-footer{position:absolute;bottom:24px;left:27px;right:27px;display:flex;justify-content:space-between;color:#9a9e99;font:6px ui-monospace;letter-spacing:.13em}
+.dial-footer b{color:#4f5552}
+@keyframes dialIn{from{opacity:0}.to{opacity:1}}@keyframes dialSpin{to{transform:rotate(360deg)}}
+@media(max-width:800px){
+ .premium-topbar{height:62px!important;grid-template-columns:auto auto!important}.topbar-center{display:none}.dial-trigger{width:44px;height:44px}.global-search-trigger span,.hunt-pill,.ghee-pill{display:none}
+ .dial-stage{height:calc(100vh - 20px);border-radius:25px}.dial{width:94vw;height:94vw;max-width:94vw;max-height:64vh}.dial-core{width:112px;height:112px}.dial-core img{width:36px;height:36px}.dial-item{--radius:min(37vw,175px);width:92px;height:56px;margin:-28px -46px}.dial-item b{font-size:7px}
+}
