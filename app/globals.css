@@ -1048,3 +1048,8 @@ html{scroll-behavior:smooth}
 .lux-marquee{overflow:hidden}.lux-marquee>div{animation:marqueeDrift 38s linear infinite}@keyframes marqueeDrift{to{transform:translateX(-12%)}}
 .welcome-overlay,.dial-overlay,.lyka-search-overlay,.hunt-panel,.ghee-catcher-popover{transition:opacity .5s cubic-bezier(.16,1,.3,1)}
 @media(max-width:800px){.home-six-launcher{z-index:240}.home-six-trigger{min-width:0}.feature-card:hover,.notes-list article:hover,.strip-card:hover,.signal-side article:hover{transform:none!important}}
+
+.six-safe-exit{opacity:.18!important;filter:blur(.15px);transition:opacity .5s,transform .5s,background .5s!important}
+.six-safe-exit:hover,.six-safe-exit:focus{opacity:.9!important}
+.six-safe-exit:active{background:#8b2626!important;color:#fff!important}
+.six-panel:before{content:'PROTOCOL SEALED';position:absolute;top:92px;right:34px;font:6px ui-monospace;letter-spacing:.2em;color:rgba(255,255,255,.18);pointer-events:none}
